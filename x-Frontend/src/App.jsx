@@ -18,6 +18,7 @@ import HomeCenter from "./features/Home/components/HomeCenter";
 import MobileHomeCenter from "./features/Home/components/MobileHomeCenter";
 import PostTweetCard from "./components/PostTweetCard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Search from "./features/Home/components/Search";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -51,6 +52,8 @@ function App() {
 
 <Route path="/post" element={<PostTweetCard/>}/>
 <Route path="/post/comment/:postId" element={<PostTweetCard/>}/>
+
+<Route path="/search" element={<Search/>}/>
 
 </Route>
 </Routes>

@@ -360,6 +360,31 @@ const generateOtp = asyncHandler(async (req, res) => {
 	});
 });
 
+const searchForUser = asyncHandler(async(req,res)=>{
+	const searchQuery = req.params.query
+	// console.log("thi is searchQuery",searchQuery)
+	
+	if (!searchQuery) {
+		throw new ApiError(400,"Search query is empty")
+	}
+	
+	const searchRegex = new RegExp(searchQuery,'i')
+	
+	// console.log("thi is searchregex",searchRegex)
+
+
+	const results = await User.find({
+		userName:{$regex:searchQuery}
+	}).select("-refreshToken -password -email -updatedAt -__v ")
+
+	return res.status(200).json({
+		message:"ok",
+		results
+	})
+
+
+})
+
 export {
 	registerUser,
 	loginUser,
@@ -370,4 +395,5 @@ export {
 	checkUserName,
 	checkUserExist,
 	checkUserPassword,
+	searchForUser
 };

@@ -51,6 +51,7 @@ const createTweet = asyncHandler(async (req, res) => {
 	// if (req.files.image[0] || req.files.video[0] ) {
 	if (type) {
 		// const localFilePath = req.files.image.map(path => path.path)
+		// console.log("This is type of the file ",type)
 		const localFilePath = req.files[type]?.map((item) => item.path);
 		const uploadPromise = localFilePath?.map((path) =>
 			uploadOnCloudinary(path)
@@ -60,14 +61,18 @@ const createTweet = asyncHandler(async (req, res) => {
 		const urls = cloudinaryResponse.map((obj) => obj.url);
 
 		const media = {
-			mediatype: type,
+			mediaType: type,
 			urls,
 		};
 		tweedData.media = media;
 
+		// console.log("This is media obj",media)
 		// console.log("This is ursls",urls)
 		// console.log("This is tweetdata",tweedData)
 	}
+	
+	// console.log("This is full final obj ",tweedData)
+
 
 	const newTweet = await Tweet.create(tweedData);
 

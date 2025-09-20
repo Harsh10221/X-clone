@@ -19,16 +19,15 @@ import AdititonalTweetCardFeatures from "./AdititonalTweetCardFeatures";
 
 dayjs.extend(relativeTime);
 
-
 function TweetCard({ tweetData }) {
-  // console.log("this is from teweetdata",tweetData)
+  // console.log("this is from teweetdata", tweetData);
   const [isfullPostVisible, setIsFullPostVisible] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { selectedImage, openPreview, closePreview } = useImagePreview();
- 
+  console.log("THis is the selectedImage", selectedImage);
+
   const authorProfileUrl = `/profile/${tweetData.author._id}`;
 
- 
   const postRef = useRef(null);
 
   const handlePostHeight = () => setIsFullPostVisible((prev) => !prev);
@@ -59,27 +58,46 @@ function TweetCard({ tweetData }) {
     <div className="w-full  border-b border-[#878787] bg-black p-2 h-auto   flex   ">
       {selectedImage ? (
         <div className="h-screen w-screen cursor-pointer  flex items-center justify-center  top-0 left-0 fixed  z-50  bg-black">
-       
           <XMarkIcon
             onClick={closePreview}
             className="absolute cursor-pointer z-50 top-4 left-4 text-white w-6 h-6"
           />
-
-          <div className=" w-auto  absolute z-40   ">
-            <img
-              className="w-full h-full"
-              onLoad={handleImageLoad}
-              src={isImageLoaded ? selectedImage : default_profile}
-              alt=""
-            />
-          </div>
+          {/* {selectedImage.includes("video") } */}
+          {selectedImage.mediaType == "image" ? (
+            <div className=" w-auto  absolute z-40   ">
+              <img
+                className="w-full h-full"
+                onLoad={handleImageLoad}
+                src={isImageLoaded ? selectedImage.url : default_profile}
+                alt=""
+              />
+            </div>
+          ) : (
+            <div className=" w-auto  absolute z-40   ">
+              <video
+                controls
+                className="w-full  h-full"
+                onLoad={handleImageLoad}
+                src={isImageLoaded ? selectedImage.url : default_profile}
+                // src={selectedImage.url}
+                alt=""
+              />
+            </div>
+          )}
         </div>
       ) : null}
 
       {/* <div className='bg-red-950 w-14 max-h-[83vh] ' > */}
 
-      <Link to={authorProfileUrl} state={{ author: tweetData.author,postInfo : tweetData,fullData :tweetData }}>
-      {/* <Link to={authorProfileUrl} state={{ author: tweetData.author,postInfo : tweetData }}> */}
+      <Link
+        to={authorProfileUrl}
+        state={{
+          author: tweetData.author,
+          postInfo: tweetData,
+          fullData: tweetData,
+        }}
+      >
+        {/* <Link to={authorProfileUrl} state={{ author: tweetData.author,postInfo : tweetData }}> */}
         <div
           // onClick={handleRedirectToUserProfile}
 
@@ -96,7 +114,6 @@ function TweetCard({ tweetData }) {
 
       {/* max-h-[83vh] */}
       <div className=" flex-1    overflow-hidden ">
-
         <div className="text-[#777777] justify-between text-sm flex gap-1 px-1 ">
           <div className="">
             <span className="mr-1 font-bold text-white truncate inline-block align-middle max-w-24 ">
@@ -157,25 +174,38 @@ function TweetCard({ tweetData }) {
             tweetData.media.urls.length > 1 ? "gap-0.5  grid grid-cols-2" : null
           } h-auto  mt-4 border border-[#595959] rounded-xl overflow-hidden`}
         >
-          {tweetData.media.urls.map((img) => (
-            // console.log("This is img",img)
-            <div
-              key={img}
-              onClick={() => openPreview(img)}
-              className="relative aspect-square w-full"
-            >
-              {" "}
-              <img
-                className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
-                src={img}
-                alt="Tweet media"
-              />
-            </div>
-          ))}
+          {tweetData?.media?.mediaType == "image"
+            ? tweetData.media.urls.map((img) => (
+                <div
+                  key={img}
+                  onClick={() => openPreview({ mediaType: "image", url: img })}
+                  className="relative aspect-square w-full"
+                >
+                  {" "}
+                  <img
+                    className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
+                    src={img}
+                    alt="Tweet media"
+                  />
+                </div>
+              ))
+            : tweetData.media.urls.map((img) => (
+                <div
+                  key={img}
+                  onClick={() => openPreview({ mediaType: "video", url: img })}
+                  className="relative aspect-square w-full"
+                >
+                  {" "}
+                  <video
+                    className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
+                    src={img}
+                    alt="Tweet media"
+                  />
+                </div>
+              ))}
         </div>
 
         <AdititonalTweetCardFeatures tweetData={tweetData} />
-        
       </div>
     </div>
   );

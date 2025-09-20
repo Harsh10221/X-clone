@@ -5,13 +5,14 @@ till here the work done and need to understand the working how the working
 
 
 
+
 what is custom hook and how to use them
 
 
-video and images / need to check the video element when there is a video 
 
 banner of the user , Edit profile
-Search for user
+
+
 
 [Google login]
 
