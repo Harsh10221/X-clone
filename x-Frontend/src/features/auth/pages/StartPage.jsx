@@ -16,24 +16,20 @@ function StartPage() {
 
   const handleAccountCreate = () => {
     if (isMobile) {
-      // console.log("This is setsingup", singup);
-      navigate("/");
+      navigate("/signup");
     } else {
-      // console.log("This is setsingup", singup);
       setSingup((prev) => !prev);
     }
+
+    
   };
-  // console.log("This is setsingup outside handle create", singup);
-  
+
   const handleAccountLogin = () => {
-    // console.log("I am login ", loginvisible);
     if (isMobile) {
-      
-      console.log("i am here in account login", );
+      // console.log("i am here in account login");
       navigate("/login");
-      
     } else {
-      console.log("i am here in account login elseeeee", );
+      // console.log("i am here in account login elseeeee");
       setLoginVisible((prev) => !prev);
     }
   };
@@ -50,7 +46,7 @@ function StartPage() {
             singup ? "md:flex  hidden" : "hidden"
           }`}
         >
-          <SignupPage handleAccountCreate={handleAccountCreate} />
+          <SignupPage  handleAccountCreate={handleAccountCreate} />
         </div>
       )}
 

@@ -3,6 +3,20 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 
 // require('dotenv').config();
+// In app.js or index.js
+import fs from 'fs';
+import path from 'path';
+
+// Define the temporary directory path
+// console.log("hello from app.js")
+const tmpDir = path.join(process.cwd(), "public", "tmp");
+
+// ✅ Ensure the temporary directory exists
+if (!fs.existsSync(tmpDir)) {
+    fs.mkdirSync(tmpDir, { recursive: true });
+    console.log("Created temporary directory for uploads:", tmpDir);
+}
+
 
 
 const app = express()

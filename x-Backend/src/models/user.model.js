@@ -12,11 +12,11 @@ const userSchema = new Schema(
             trim: true,
             index: true
         },
-        // fullName: {
-        //     type: String,
-        //     required: true,
-        //     trim: true
-        // },
+        fullName: {
+            type: String,
+            required: true,
+            trim: true
+        },
         password: {
             type: String,
             required: true,
@@ -46,6 +46,18 @@ const userSchema = new Schema(
         dob: {
             type:Date,
             required:true,
+        },
+        refreshToken:{
+            type:String
+           
+        },
+        followers: {
+            type: Number,
+            default: 0
+        },
+        followings: {
+            type: Number,
+            default: 0
         }
     }, {
     timestamps: true

@@ -12,7 +12,7 @@ import { useResponsive } from "../hooks/useResponsive";
 function SignupPage({ handleAccountCreate }) {
   const methods = useForm();
 
-  console.log("this is handlecreate ",handleAccountCreate)
+  // console.log("this is handlecreate ",handleAccountCreate)
 
   const { isMobile } = useResponsive();
 
@@ -50,7 +50,7 @@ function SignupPage({ handleAccountCreate }) {
   };
 
   const handleDataFromChild = (childData) => {
-    console.log("i am running handel data child", childData);
+    // console.log("i am running handel data child", childData);
     if (childData?.day) {
       setEligible(true);
     }
@@ -219,6 +219,9 @@ function SignupPage({ handleAccountCreate }) {
         dataToUpload.append(key, finalData[key]);
       }
     }
+
+    
+
     try {
       const registerResponse = await axios.post(
         "http://localhost:8000/api/v1/users/register",

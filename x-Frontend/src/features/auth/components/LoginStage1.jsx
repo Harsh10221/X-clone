@@ -6,6 +6,7 @@ import InputBox from "./InputBox";
 import { useFormContext } from "react-hook-form";
 import AnimatedComponent from "../../../utils/ErrorAnimatedComponent";
 import { useNavigate } from "react-router-dom";
+import { useResponsive } from "../hooks/useResponsive";
 
 function LoginStage1({
   errorMsgStage1,
@@ -16,6 +17,7 @@ function LoginStage1({
 }) {
 
   const navigate = useNavigate()
+  const { isMobile } = useResponsive()
   // const [first, setfirst] = useState(second)
 
   const {
@@ -54,7 +56,7 @@ function LoginStage1({
       <div className="cursor-pointer relative flex items-center    ">
         <XMarkIcon 
         // onClick={handleAccountLogin}
-        onClick={backToStarPage}
+        onClick={isMobile ? backToStarPage : handleAccountLogin}
 
         // onClick={ ()=>{ navigate("/") } }
 

@@ -1,35 +1,100 @@
-
-
 $$
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 till here the work done and need to understand the working how the working
 
 
-When on the desktop the error msg should be in a little correct place 
+
+
+what is custom hook and how to use them
+
+
+video and images / need to check the video element when there is a video 
+
+banner of the user , Edit profile
+Search for user
+
+[Google login]
+
+
+
+{
+  when unfollow a user the btn didnt changeing to follow again }
+
+show comment in comment 
+  add the full name in the form in final stage 
+
+{
+  ***
+{errors
+When on the desktop the error msg should be in a little correct place
 and on the password field the error msg is little bad
+}
 
-when on last stage when the usernamae was enter the registretion is taking time need loading when the username is unique
+{loadings
 
-what is custom hook and how to use them 
+  when on last stage when the usernamae was enter the registretion is taking time need loading when the username is unique
 
-use the final data to do the registration 
+When te user is logedinh and the backend is off , the user can go to the home route need to do somthing // {loading spinner }
 
-what is map use in stored otp 
+default image show until the image is fully loaded
+
+when post sucess fully get back or somthing
 
 
-check for the password visble means the eye is correct or not login page2 password
+}
+
+
+
+
+
+
+when scroll tweets comein 10 twwets new / paganiation 
+
+
+
+
+Notificataion
+foryou and following tweet
+tweet  repost 
+
+when click on grok send user to the og grok
+
+
+
+
+How this is working
+
+<input
+              {...register("image")}
+                ref={ (e)=>{
+
+                  imgRef.current = e;
+                  register("image").ref(e);
+
+                 }}
+
+                onChange={handleFileChange}
+                type="file"
+                className="hidden"
+              />
+***
+
+
+
+
+}
 
 
 Date of birth needed in the last final data
 
-Make error msg component use in the verification otp 
-email exist 
+Make error msg component use in the verification otp
+email exist
 
-aroww should work to go back in verification 
+aroww should work to go back in verification
 
-check the register and complete the both register and login proceess now 
+check the register and complete the both register and login proceess now
 
- 
+
 
 
 {
@@ -43,7 +108,7 @@ what is http client that hered in fetch and all
 
 forward ref in detailed and that was use in the inpuut box
 
-check the opt for working 
+check the opt for working a
 
 *********
 
@@ -97,12 +162,12 @@ function StaleCounter() {
   return (
     <div>
       <p>Current Count: {count}</p>
-      
+
       {/* This button updates the state, causing a re-render */}
       <button onClick={() => setCount(count + 1)}>
         Click me
       </button>
-      
+
       {/* This button schedules the log with the CURRENT version of logCountLater */}
       <button onClick={logCountLater}>
         Log Count After 3 Seconds
@@ -121,3 +186,4 @@ Wait 3 seconds. The alert will pop up and say: "The count was: 0".
 This is the stale data bug in action. The function that setTimeout is holding onto is a "photocopy" from the first render, when count was 0. It has no idea that the state has since changed.
 
 This is exactly why the useEffect dependency array is so important. It's React's way of ensuring your effects always use the "freshest photocopy" of your functions and variables from the latest render.
+$$

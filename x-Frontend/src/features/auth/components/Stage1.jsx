@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Xsvg from "./Xsvg";
 import BirthDay from "./BirthDay";
+import { useResponsive } from "../hooks/useResponsive";
 import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { WalletIcon } from "@heroicons/react/20/solid";
+import { useNavigate } from "react-router-dom";
 
 function Stage1({
   handleAccountCreate,
@@ -17,17 +19,25 @@ function Stage1({
     watch,
     formState: { errors },
   } = useFormContext();
+  const navigate = useNavigate()
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const { isMobile } = useResponsive();
+  
+  
+  
 
   const checkclick = () =>{
     console.log(" i am clicked",handleAccountCreate)
   }
 
-  // console.log("this is error " ,iserror)
+  const handleNavigateMobile = () => navigate("/")
+
 
   return (
     <div className="gap-7  md:px-14 md:py-10 relative flex flex-col items-center justify-center">
       <svg
-        onClick={handleAccountCreate}
+        // onClick={isMobile ? handleAccountCreate : navigate("/")}
+        onClick={isMobile ?  handleNavigateMobile  : handleAccountCreate}
         // onClick={checkclick}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

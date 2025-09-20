@@ -2,13 +2,13 @@ import React from 'react'
 
 // md:h-96 md:w-72
 
-function Xsvg() {
+function Xsvg({width}) {
   return (
     <div>
       <svg
               viewBox="0 0 24 24"
               aria-hidden="true"
-              className=" text-white w-10 h-8  "
+              className={` text-white ${width || "w-10" }   h-8  `}
             >
               <g>
                 <path

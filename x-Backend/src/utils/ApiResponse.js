@@ -6,6 +6,7 @@ class ApiResponse {
     }
 }
 
+export default ApiResponse
 
 // class ApiResponse {
 //     constructor(statusCode,data,message= "Success") {
