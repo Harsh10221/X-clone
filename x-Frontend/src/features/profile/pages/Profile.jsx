@@ -76,7 +76,8 @@ function Profile() {
           withCredentials: true,
         }
       )
-      .then((response) => setIsFollow(true))
+      .then((response) => setIsFollowedByYou(true))
+      // .then((response) => setIsFollow(true))
       // .then((response) => (response.status == 200 ? setIsFollow(true) : null))
       .catch((error) => console.error(error));
   };
@@ -90,7 +91,8 @@ function Profile() {
           withCredentials: true,
         }
       )
-      .then((response) => setIsFollow(false))
+      .then((response) => setIsFollowedByYou(false))
+      // .then((response) => setIsFollow(false))
       // .then((response) => (response.status == 200 ? setIsFollow(true) : null))
       .catch((error) => console.error(error));
   };

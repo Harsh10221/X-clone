@@ -172,7 +172,8 @@ function PostTweetCard() {
       <div className="w-full h-full p-4 ">
         <div className="flex justify-between   items-center ">
           <ArrowLeftIcon
-            onClick={() => navigate("/home")}
+          
+            onClick={() => isThisIsComment ? navigate(-1) : navigate("/home")}
             className="text-white w-5 h-5 items-center"
           />
           <div className="font-semibold flex gap-6 ">

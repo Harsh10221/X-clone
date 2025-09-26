@@ -2,7 +2,7 @@ import { Router } from "express";
 import { checkUserEmail, checkUserExist, checkUserName, checkUserPassword, generateOtp, loginUser, logoutUser, otpCheck, registerUser, searchForUser } from "../controllers/user.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import verifyJwt from "../middlewares/auth.middleware.js";
-import { createTweet, deleteTweet, getfeedTweet, getUserTweet } from "../controllers/tweet.controller.js";
+import { createTweet, deleteTweet, getfeedTweet, getPostComments, getUserTweet } from "../controllers/tweet.controller.js";
 import { followUser, getfollowerList,  getUserProfileInfo, unFollowUser } from "../controllers/follow.controller.js";
 import generateRefreshToken from "../utils/refreshToken.js";
 import { like, unLike } from "../controllers/like.controller.js";
@@ -56,6 +56,7 @@ router.route("/unfollow-user").post(verifyJwt,unFollowUser)
 router.route("/getuser-posts/:username").get(verifyJwt,getUserTweet)
 // router.route("/getuser-posts/:username").get(getUserTweet)
 router.route("/get-followerlist/:userId").get(verifyJwt,getfollowerList)
+router.route("/get-postcomments/:postid").get(verifyJwt,getPostComments)
 // router.route("/get-userprofileInfo/:userId").get(verifyJwt,getUserProfileInfo)
 
 router.route("/like-user").post(verifyJwt,like)

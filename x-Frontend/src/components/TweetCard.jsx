@@ -24,14 +24,22 @@ function TweetCard({ tweetData }) {
   const [isfullPostVisible, setIsFullPostVisible] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { selectedImage, openPreview, closePreview } = useImagePreview();
-  console.log("THis is the selectedImage", selectedImage);
+  // console.log("THis is the selectedImage", selectedImage);
 
-  const authorProfileUrl = `/profile/${tweetData.author._id}`;
+  const authorProfileUrl = `/profile/${tweetData?.author?._id}`;
+  const authorTweetDetails = `/user/tweet`;
 
   const postRef = useRef(null);
 
   const handlePostHeight = () => setIsFullPostVisible((prev) => !prev);
   const handleImageLoad = () => setIsImageLoaded(true);
+  const handleCenterDivClick = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  // const handleRedirectPostInfo = () => {
+
+  // }
 
   useEffect(() => {
     if (postRef?.current?.clientHeight > 240) {
@@ -47,15 +55,15 @@ function TweetCard({ tweetData }) {
     // }
   }, []);
 
-  let formatedDateinAgos = dayjs(tweetData.createdAt)
+  let formatedDateinAgos = dayjs(tweetData?.createdAt)
     .fromNow()
     .replace(" days ago", "d")
     .replace("a day ago", "1d");
 
-  let formatedDate = dayjs(tweetData.createdAt).format("MMM D");
+  let formatedDate = dayjs(tweetData?.createdAt).format("MMM D");
 
   return (
-    <div className="w-full  border-b border-[#878787] bg-black p-2 h-auto   flex   ">
+    <div className="w-full  border-b border-[#555555] bg-black p-2 h-auto   flex   ">
       {selectedImage ? (
         <div className="h-screen w-screen cursor-pointer  flex items-center justify-center  top-0 left-0 fixed  z-50  bg-black">
           <XMarkIcon
@@ -92,12 +100,11 @@ function TweetCard({ tweetData }) {
       <Link
         to={authorProfileUrl}
         state={{
-          author: tweetData.author,
+          author: tweetData?.author,
           postInfo: tweetData,
           fullData: tweetData,
         }}
       >
-        {/* <Link to={authorProfileUrl} state={{ author: tweetData.author,postInfo : tweetData }}> */}
         <div
           // onClick={handleRedirectToUserProfile}
 
@@ -107,105 +114,124 @@ function TweetCard({ tweetData }) {
             className="w-full object-cover h-full  "
             src={tweetData?.author?.avatarUrl || default_profile}
             alt=""
-            srcset=""
           />
         </div>
       </Link>
 
       {/* max-h-[83vh] */}
-      <div className=" flex-1    overflow-hidden ">
-        <div className="text-[#777777] justify-between text-sm flex gap-1 px-1 ">
-          <div className="">
-            <span className="mr-1 font-bold text-white truncate inline-block align-middle max-w-24 ">
-              {tweetData?.author?.fullName}
-            </span>
-            <span className="mr-1 truncate inline-block align-middle max-w-28">
-              {" "}
-              @{tweetData.author.userName}{" "}
-            </span>
-            <span className="inline-block align-middle mr-1 ">·</span>
-            <span className="inline-block align-middle mr-1 ">
-              {parseInt(formatedDateinAgos) >= 8
-                ? formatedDate
-                : formatedDateinAgos}
-            </span>
+
+      <div className=" flex-1   overflow-hidden ">
+        <Link
+          to={authorTweetDetails}
+          state={{
+            author: tweetData?.author,
+            postInfo: tweetData,
+          }}
+        >
+          <div className="text-[#777777] justify-between text-sm flex gap-1 px-1 ">
+            <div className="">
+              <span className="mr-1 font-bold text-white truncate inline-block align-middle max-w-24 ">
+                {tweetData?.author?.fullName}
+              </span>
+              <span className="mr-1 truncate inline-block align-middle max-w-28">
+                {" "}
+                @{tweetData?.author.userName}{" "}
+              </span>
+              <span className="inline-block align-middle mr-1 ">·</span>
+              <span className="inline-block align-middle mr-1 ">
+                {parseInt(formatedDateinAgos) >= 8
+                  ? formatedDate
+                  : formatedDateinAgos}
+              </span>
+            </div>
+
+            <div className="flex gap-1">
+              <span>
+                {" "}
+                <GrokSvg color={"#777777"} width="w-5" />{" "}
+              </span>
+              <span>
+                {" "}
+                <EllipsisHorizontalIcon className=" w-6 h-6" />{" "}
+              </span>
+            </div>
           </div>
 
-          <div className="flex gap-1">
-            <span>
-              {" "}
-              <GrokSvg color={"#777777"} width="w-5" />{" "}
-            </span>
-            <span>
-              {" "}
-              <EllipsisHorizontalIcon className=" w-6 h-6" />{" "}
-            </span>
-          </div>
-        </div>
-
-        <div>
-          <div
-            ref={postRef}
-            className={` overflow-hidden text-white
+          <div>
+            <div
+              ref={postRef}
+              className={` overflow-hidden text-white
                ${isfullPostVisible ? "h-60" : "h-auto"}
                `}
-            //  ${postRef?.current?.clientHeight > 240 ? "h-60" : "h-auto"  }
-            //  `}
-            // className={`text-white px-1 ${
-            //   isfullPostVisible ? "h-auto" : "h-60"
-            // }   overflow-hidden  `}
-          >
-            {tweetData?.text}
+              //  ${postRef?.current?.clientHeight > 240 ? "h-60" : "h-auto"  }
+              //  `}
+              // className={`text-white px-1 ${
+              //   isfullPostVisible ? "h-auto" : "h-60"
+              // }   overflow-hidden  `}
+            >
+              {tweetData?.text}
+            </div>
+
+            <div
+              onClick={handlePostHeight}
+              className={`text-blue-400 underline ${
+                isfullPostVisible ? "block" : "hidden"
+                // isfullPostVisible ? "block" : "hidden"
+              } `}
+            >
+              Show more
+            </div>
           </div>
+          {tweetData?.media.urls.length == 0 ? (
+            <div></div>
+          ) : (
+            <div
+              onClick={handleCenterDivClick}
+              className={` prevent max-w-lg ${
+                tweetData?.media.urls.length > 1
+                  ? "gap-0.5  grid grid-cols-2"
+                  : null
+              } 
+            h-auto  mt-4 border border-[#595959] rounded-xl overflow-hidden`}
+            >
+              {tweetData?.media?.mediaType == "image"
+                ? tweetData?.media.urls.map((img) => (
+                    <div
+                      key={img}
+                      onClick={() =>
+                        openPreview({ mediaType: "image", url: img })
+                      }
+                      className="relative aspect-square w-full"
+                    >
+                      {" "}
+                      <img
+                        className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
+                        src={img}
+                        alt="Tweet media"
+                      />
+                    </div>
+                  ))
+                : tweetData?.media.urls.map((img) => (
+                    <div
+                      key={img}
+                      onClick={() =>
+                        openPreview({ mediaType: "video", url: img })
+                      }
+                      className="relative aspect-square w-full"
+                    >
+                      {" "}
+                      <video
+                        className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
+                        src={img}
+                        alt="Tweet media"
+                      />
+                    </div>
+                  ))}
+            </div>
+          )}
 
-          <div
-            onClick={handlePostHeight}
-            className={`text-blue-400 underline ${
-              isfullPostVisible ? "block" : "hidden"
-              // isfullPostVisible ? "block" : "hidden"
-            } `}
-          >
-            Show more
-          </div>
-        </div>
-
-        <div
-          className={`max-w-lg ${
-            tweetData.media.urls.length > 1 ? "gap-0.5  grid grid-cols-2" : null
-          } h-auto  mt-4 border border-[#595959] rounded-xl overflow-hidden`}
-        >
-          {tweetData?.media?.mediaType == "image"
-            ? tweetData.media.urls.map((img) => (
-                <div
-                  key={img}
-                  onClick={() => openPreview({ mediaType: "image", url: img })}
-                  className="relative aspect-square w-full"
-                >
-                  {" "}
-                  <img
-                    className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
-                    src={img}
-                    alt="Tweet media"
-                  />
-                </div>
-              ))
-            : tweetData.media.urls.map((img) => (
-                <div
-                  key={img}
-                  onClick={() => openPreview({ mediaType: "video", url: img })}
-                  className="relative aspect-square w-full"
-                >
-                  {" "}
-                  <video
-                    className="absolute cursor-pointer top-0 left-0 w-full h-full object-cover"
-                    src={img}
-                    alt="Tweet media"
-                  />
-                </div>
-              ))}
-        </div>
-
-        <AdititonalTweetCardFeatures tweetData={tweetData} />
+        </Link>
+          <AdititonalTweetCardFeatures tweetData={tweetData} />
       </div>
     </div>
   );

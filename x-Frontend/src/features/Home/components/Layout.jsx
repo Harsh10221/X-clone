@@ -21,7 +21,7 @@ function Layout() {
         
           {/* <PostFeed /> */}
 
-          <div className=" fixed  w-full  bottom-0">
+          <div className=" fixed w-full  bottom-0">
             <MobileNav />
           </div>
         </div>

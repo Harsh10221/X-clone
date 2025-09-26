@@ -12,22 +12,23 @@ function AdititonalTweetCardFeatures({ tweetData }) {
   //   console.log("this is data", tweetData);
 
   const [isLiked, setisLiked] = useState(false);
-  const commentUnderPostUrl = `/post/comment/${tweetData._id}`;
+  const commentUnderPostUrl = `/post/comment/${tweetData?._id}`;
 
   // console.log("This is isthis comment",isThisIsComment)
 
   useEffect(() => {
     // console.log(" hello outside if ",tweetData.isLikedByYou)
-    if (tweetData.isLikedByYou) {
+    if (tweetData?.isLikedByYou) {
       // console.log(" hello from useeffect ",tweetData.isLikedByYou)
 
       setisLiked(true);
     } else {
       setisLiked(false);
     }
-  }, [tweetData.isLikedByYou]);
+  }, [tweetData?.isLikedByYou]);
 
-  const handleLikePost = () => {
+  const handleLikePost = (e) => {
+    e.stopPropagation();
     axios
       .post(
         `http://localhost:8000/api/v1/users/like-user`,
@@ -57,7 +58,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
       <Link
         className=""
         to={commentUnderPostUrl}
-        state={{ author: tweetData.author, postInfo: tweetData }}
+        state={{ author: tweetData?.author, postInfo: tweetData }}
       >
         <div onClick={handleComment}>
           <ChatBubbleOvalLeftIcon className=" w-5 h-5 " />{" "}

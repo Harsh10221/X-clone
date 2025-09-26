@@ -18,8 +18,7 @@ banner of the user , Edit profile
 
 
 
-{
-  when unfollow a user the btn didnt changeing to follow again }
+
 
 show comment in comment 
   add the full name in the form in final stage 
