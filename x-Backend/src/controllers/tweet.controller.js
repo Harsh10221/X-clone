@@ -8,39 +8,21 @@ import { User } from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import mongoose, { Model } from "mongoose";
 import { lookup } from "dns";
+import { FollowerModel } from "../models/follow.model.js";
+import { clients } from "../app.js";
 
 // const tweet = await Tweet.findById(someId).populate('author');
 
 const createTweet = asyncHandler(async (req, res) => {
 	const { author, userInput, parentTweetId, type } = req.body;
-	// console.log("THis is the data ", req.body);
-	// console.log("THis is the file info  ",req.files)
-	// console.log("THis is the file info  ", req.files[type].length)
-	// console.log("THis is the media type  ", type)
-	// console.log("THis is the media obj   ", req.files[type])
-	// const image = req.files.image
-	// console.log("This is mdeia", req.files.image)
-	// console.log("This is mdeia", req.files.image[0].path)
+	// console.log("This is userobj",req.user)
+	// console.log("This is username",req.user.userName)
 
-	// if (userInput.length == 0 || !author || !type) {
-	// console.log("thsi si userinput",userInput.length)
 	if (!author || userInput.length == 0) {
 		const error = new Error("All fields are required");
 		error.status = 400;
 		throw error;
 	}
-
-	// if (req.files[type]?.length < 0) {
-	// 	console.log(" i am runned ")
-	// 	// console.log("THis is the media type  ", type)
-	// 	const localFilePath = req.files[type].map((item) => item.path);
-	// 	localFilePath.map((path) => fs.unlinkSync(path));
-	// }
-
-	// const error = new Error("All fields are required");
-	// error.status = 400;
-	// throw error;
-	// }
 
 	const tweedData = {
 		author,
@@ -48,10 +30,7 @@ const createTweet = asyncHandler(async (req, res) => {
 		parentTweetId,
 	};
 
-	// if (req.files.image[0] || req.files.video[0] ) {
 	if (type) {
-		// const localFilePath = req.files.image.map(path => path.path)
-		// console.log("This is type of the file ",type)
 		const localFilePath = req.files[type]?.map((item) => item.path);
 		const uploadPromise = localFilePath?.map((path) =>
 			uploadOnCloudinary(path)
@@ -65,17 +44,44 @@ const createTweet = asyncHandler(async (req, res) => {
 			urls,
 		};
 		tweedData.media = media;
-
-		// console.log("This is media obj",media)
-		// console.log("This is ursls",urls)
-		// console.log("This is tweetdata",tweedData)
 	}
-
-	// console.log("This is full final obj ",tweedData)
 
 	const newTweet = await Tweet.create(tweedData);
 
-	// console.log("This is newtweet ",newTweet)
+	if (!newTweet) {
+		throw new ApiError(500, "Error while creating a post");
+	}
+
+	// return res.json({ message: "The tweet is created Successfully" });
+
+	try {
+		const followers = await FollowerModel.find({ following: author });
+		const followersIds = followers.map((doc) => doc.follower);
+
+		// console.log("this is followers", followersIds);
+
+		// const followers = author.followers;
+
+		const notification = {
+			type: "NEW_POST",
+			payload: {
+				message: `New post from  ${author}`,
+				post: newTweet,
+			},
+		};
+
+		followersIds.forEach((followerId) => {
+			const followerSocket = clients.get(followerId.toString());
+
+			if (followerSocket && followerSocket.readyState === WebSocket.OPEN) {
+				{
+					followerSocket.send(JSON.stringify(notification));
+				}
+			}
+		});
+	} catch (error) {
+		console.error("WebSocket notification error:", error);
+	}
 
 	return res.json({ message: "The tweet is created Successfully" });
 });
@@ -373,6 +379,7 @@ const getfeedTweet = asyncHandler(async (req, res) => {
 	const latestTweets = await Tweet.aggregate([
 		{
 			$match: matchCriteria,
+			// $match: { parentTweetId: { $exists: false } },
 		},
 		{
 			$match: { parentTweetId: { $exists: false } },
@@ -423,14 +430,17 @@ const getfeedTweet = asyncHandler(async (req, res) => {
 		},
 	]);
 
-	const nextCursor = latestTweets.length === limit ? latestTweets[latestTweets.length-1].createdAt : null
+	const nextCursor =
+		latestTweets.length === limit
+			? latestTweets[latestTweets.length - 1].createdAt
+			: null;
 
 	// console.log("Latest tweets", latestTweets)
 
 	return res.json({
 		// latestTweets,
-		posts : latestTweets,
-		nextCursor
+		posts: latestTweets,
+		nextCursor,
 	});
 });
 

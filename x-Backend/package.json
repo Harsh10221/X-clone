@@ -22,7 +22,8 @@
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
     "nodemon": "^3.1.10",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0"

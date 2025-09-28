@@ -1,48 +1,85 @@
-import express from "express"
-import cors from "cors"
-import cookieParser from "cookie-parser"
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import http from "http";
+import { WebSocketServer } from "ws";
 
 // require('dotenv').config();
 // In app.js or index.js
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-// Define the temporary directory path
-// console.log("hello from app.js")
-const tmpDir = path.join(process.cwd(), "public", "tmp");
+const app = express();
 
-// ✅ Ensure the temporary directory exists
-if (!fs.existsSync(tmpDir)) {
-    fs.mkdirSync(tmpDir, { recursive: true });
-    console.log("Created temporary directory for uploads:", tmpDir);
-}
+app.use(
+	cors({
+		origin: process.env.CORS_ORIGIN,
+		credentials: true,
+	})
+);
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.static("public"));
+
+const server = http.createServer(app);
+
+//creating a websockt server and atteched it to the http server
+const wss = new WebSocketServer({ server });
+
+//a map to store connections , mapping userid to websoket obj
+export const clients = new Map();
+
+
+wss.on("connection", (ws) => {
+
+	console.log("✅ Client connected");
+
+	ws.on("message", (message) => {
+
+		try {
+			const data = JSON.parse(message);
+
+			if (data.type == "authenticate" && data.payload.userId) {
+				const userId = data.payload.userId;
+				clients.set(userId, ws);
+				
+				console.log("User authenticated and connected", userId);
+			}
+		} catch (error) {
+			console.error("Error parsing message ", error);
+		}
+	});
+
+	ws.on("close", () => {
+		for (const [userId, clientWs] of clients.entries()) {
+			if (clientWs === ws) {
+				clients.delete(userId);
+				console.log(`❌ User ${userId} disconnected.`);
+				break;
+			}
+		}
+	});
+	ws.on("error", console.error);
+});
 
 
 
-const app = express()
-
-app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    credentials:true
-}))
-
-
-app.use(express.json())
-//browser bundles the form data this middleware encode and 
+//browser bundles the form data this middleware encode and
 // made available in our request.body
-app.use(express.urlencoded({extended:true,limit:"16kb"})) 
-app.use(express.static("public"))
-app.use(cookieParser())
+
 
 //routes
 
-import userRouter from "./routes/user.routes.js"
+import userRouter from "./routes/user.routes.js";
+// import { json } from "body-parser";
+// import { JSON } from "mysql/lib/protocol/constants/types.js";
 
-app.use("/api/v1/users",userRouter)
+app.use("/api/v1/users", userRouter);
 
-app.listen(8000,()=>{
-    console.log('Server running on http://localhost:8000');
-    
-})
+server.listen(8000, () => {
+	console.log("Server running on http://localhost:8000");
+});
 
-export {app}
+export { app };

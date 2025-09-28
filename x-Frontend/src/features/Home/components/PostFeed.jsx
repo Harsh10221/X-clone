@@ -7,8 +7,9 @@ import { useParams } from "react-router-dom";
 function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
   // const [latestTweets, setlatestTweets] = useState(null);
 
-  const [posts, sestPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [nextCursor, setNextCursor] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
 
@@ -37,31 +38,92 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
   //   return response.data;
   // };
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
+  // this was normal fetchpost
+  // const fetchPosts = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+  //     // console.log("this is next cursor ",nextCursor)
+  //     if (nextCursor) {
+  //       apiUrl += `?cursor=${nextCursor}`;
+  //     }
+
+  //     const response = await axios.get(apiUrl, { withCredentials: true });
+  //     const { posts: newPosts, nextCursor: newNextCursor } = response.data;
+
+  //     setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+
+  //     // console.log("this is new  next cursor ",newNextCursor)
+  //     // console.log("this is next cursor ",nextCursor)
+  //     setNextCursor(newNextCursor);
+  //   } catch (error) {
+  //     console.log("Failed to fetch posts", error);
+  //   }
+  //   setLoading(false);
+  //   setInitialLoad(false);
+  // }, [nextCursor]);
+
+  // console.log("this is next cursor outside of the function ",nextCursor)
+
+  const fetchPosts = async ({ pageParam = null }) => {
     try {
       let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
-      // For subsequent requests, add the cursor to the URL
-      if (nextCursor) {
-        apiUrl += `?cursor=${nextCursor}`;
-      }
-      const response = await axios.get(apiUrl, { withCredentials: true });
-      // console.log("this is response",response)
-      const { posts: newPosts, nextCursor: newNextCursor } = response.data;
-      console.log("Fetched new posts:", newPosts);
-      console.log("Received next cursor:", newNextCursor);
 
-      // console.log("this is newposts",posts)
-      // Append the new posts to our existing list
-      sestPosts((prevPosts) => [...prevPosts, ...newPosts]);
-      // Save the new cursor for the next fetch
-      setNextCursor(newNextCursor);
+      if (pageParam) {
+        apiUrl += `?cursor=${pageParam}`;
+      }
+      const { data } = await axios.get(apiUrl, { withCredentials: true });
+      return data;
     } catch (error) {
-      console.error("Failed to fetch posts:", error);
+      console.log("There was a error while fetching post", error);
     }
-    setLoading(false);
-    setInitialLoad(false);
-  }, [nextCursor]);
+  };
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["tweets"],
+    queryFn: fetchPosts,
+    initialPageParam: null, // The first page has no cursor
+    getNextPageParam: (lastPage, allPages) => {
+      // ADD THIS LOG
+      // console.log("Last page data:", lastPage);
+      return lastPage.nextCursor ?? undefined;
+    }, // The `?? undefined` tells the query there are no more pages if nextCursor is null
+  });
+
+  const observer = useRef();
+
+  const lastPostElementRef = useCallback(
+    (node) => {
+      if (isFetchingNextPage) return;
+
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isFetchingNextPage, hasNextPage, fetchNextPage]
+  );
+
+  // useEffect(() => {
+  //   fetchPosts();
+  // }, []);
+
+  // console.log("Fetched new posts:", newPosts);
+  // console.log("Received next cursor:", newNextCursor);
+
+  // console.log("this is newposts",posts)
+  // Append the new posts to our existing list
 
   const handleUserProfilePosts = async () => {
     // console.log("hello from handleuserprofile", userNameFromUrl);
@@ -95,24 +157,8 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     queryFn: handleUserProfilePosts,
     enabled: !!userNameFromUrl,
   });
-  // console.log("this is ", userPosts);
 
-  // const {
-  //   data,
-  //   fetchNextPage,
-  //   hasNextPage,
-  //   isFetchingNextPage,
-  //   status,
-  //   isPending,
-  //   error,
-  // } = useInfiniteQuery({
-  //   // } = useQuery({
-  //   queryKey: ["tweets"],
-  //   queryFn: handleUsequeryfetching,
-  //   initialPageParam: null,
-  //   getNextPageParam: (lastPage) => lastPage.nextCursor || undefined,
-  //   enabled: !userNameFromUrl,
-  // });
+  // console.log("this is ", userPosts);
 
   // console.log("this is ");
 
@@ -121,110 +167,72 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
   //   queryFn: ,
   // });
 
-  const observer = useRef();
   // console.log("This is observer ref", observer);
 
-  const lastPostElementRef = useCallback(
-    (node) => {
-      console.log("this is node ",node)
-        if (loading) return;
-        
-        // ✅ FIXED: disconnect (with a 'c')
-        if (observer.current) observer.current.disconnect();
-
-        observer.current = new IntersectionObserver((entries) => {
-            console.log(
-                "Observer triggered. Is intersecting?",
-                entries[0].isIntersecting
-            );
-            console.log("Is there a next cursor?", !!nextCursor);
-            if (entries[0].isIntersecting && nextCursor) {
-                console.log("✅ Conditions met! Fetching more posts.");
-                fetchPosts();
-            }
-        });
-
-        // ✅ FIXED: observe (with an 'e')
-        if (node) observer.current.observe(node);
-    },
-    [loading, nextCursor, fetchPosts]
-);
-
-  useEffect(() => {
-    // Fetch the first page of posts when the component mounts
-    fetchPosts();
-  }, []);
-
-  // return (
-  //   <div className="pb-12">
-  //     {userNameFromUrl
-  //       ? userPosts?.result?.map((card) =>
-  //           card.parentTweetId ? null : <TweetCard tweetData={card} />
-  //         )
-  //       : // data?.posts?.map((page, i) => (
-  //         // console.log("i am from page",page)
-  //         // <React.Fragment key={i}>
-  //         data?.pages.map((page, i) => (
-  //           <React.Fragment key={i}>
-  //             {page.posts.map((post, index) => {
-  //               // Check if this is the last post of the last page
-  //               const isLastPost =
-  //                 i === data.pages.length - 1 &&
-  //                 index === page.posts.length - 1;
-
-  //               if (isLastPost) {
-  //                 // Attach the ref to the last element
-  //                 return (
-  //                   <TweetCard
-  //                     ref={lastPostElementRef}
-  //                     key={post._id}
-  //                     tweetData={post}
-  //                   />
-  //                 );
-  //               } else {
-  //                 return <TweetCard key={post._id} tweetData={post} />;
-  //               }
-  //             })}
-  //           </React.Fragment>
-  //         ))}
-  //     {/* // </React.Fragment> */}
-  //     {/* // ))} */}
-  //     {/* // : data?.latestTweets?.map((card) =>
-  //       //     card.parentTweetId ? null : <TweetCard tweetData={card} />
-  //       //   )} */}
-  //   </div>
-  // );
-
   return (
-    <div>
-      {posts.map((post, index) => {
-        // Attach the ref to the last post
-        if (posts.length === index + 1) {
-          return (
-            <div
-              ref={lastPostElementRef}
-            >
+    <div className="pb-12">
+      {userNameFromUrl ? (
+        userPosts?.result?.map((card) =>
+          card.parentTweetId ? null : <TweetCard tweetData={card} />
+        )
+      ) : (
+        <div>
+          {data?.pages?.map((page, pageIndex) => (
+            <React.Fragment key={pageIndex}>
+              {page.posts.map((post, postIndex) => {
+                // Check if this is the last post on the last page
+                const isLastPost =
+                  pageIndex === data.pages.length - 1 &&
+                  postIndex === page.posts.length - 1;
 
-            <TweetCard
-              key={post._id}
-              tweetData={post}
-              />
-              </div>
-          );
-        } else {
-          return <TweetCard key={post._id} tweetData={post} />;
-        }
-      })}
+                if (isLastPost) {
+                  return (
+                    <div ref={lastPostElementRef} key={post._id}>
+                      <TweetCard tweetData={post} />
+                    </div>
+                  );
+                }
 
-      {/* Show a spinner at the bottom while fetching the next page */}
-      {/* {loading && !initialLoad && <LoadingSpinner />} */}
-
-      {/* Show a message when all posts are loaded */}
-      {!loading && !nextCursor && (
-        <div className="feed-end-message">You've reached the end!</div>
+                return <TweetCard key={post._id} tweetData={post} />;
+              })}
+            </React.Fragment>
+          ))}
+        </div>
       )}
     </div>
   );
+
+  // return (
+  //   <div>
+  //     {data?.pages?.map((page, pageIndex) => (
+  //       <React.Fragment key={pageIndex}>
+  //         {page.posts.map((post, postIndex) => {
+  //           // Check if this is the last post on the last page
+  //           const isLastPost =
+  //             pageIndex === data.pages.length - 1 &&
+  //             postIndex === page.posts.length - 1;
+
+  //           if (isLastPost) {
+  //             return (
+  //               <div ref={lastPostElementRef} key={post._id}>
+  //                 <TweetCard tweetData={post} />
+  //               </div>
+  //             );
+  //           }
+
+  //           return <TweetCard key={post._id} tweetData={post} />;
+  //         })}
+  //       </React.Fragment>
+  //     ))}
+  //     {/* Show a spinner at the bottom while fetching the next page */}
+  //     {/* {loading && !initialLoad && <LoadingSpinner />} */}
+
+  //     {/* Show a message when all posts are loaded */}
+  //     {!loading && !nextCursor && (
+  //       <div className="feed-end-message">You've reached the end!</div>
+  //     )}
+  //   </div>
+  // );
 }
 
 export default PostFeed;

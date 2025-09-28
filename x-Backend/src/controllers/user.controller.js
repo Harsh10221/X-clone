@@ -219,7 +219,10 @@ const checkUserExist = asyncHandler(async (req, res) => {
 });
 
 const checkUserPassword = asyncHandler(async (req, res) => {
+	// console.log("this is rq.body",req.body)
 	const { password, emailorUsername } = req.body;
+
+
 	// console.log("This is req.body", req.body);
 	// console.log("This is email", emailorUsername)
 	// console.log("This is hello form checkpass")

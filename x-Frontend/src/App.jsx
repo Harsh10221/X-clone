@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes,Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import StartPage from "./features/auth/pages/StartPage";
 import InputBox from "./features/auth/components/InputBox";
 import ErrorMessage from "./utils/ErrorMessage";
@@ -20,61 +20,41 @@ import PostTweetCard from "./components/PostTweetCard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Search from "./features/Home/components/Search";
 import TweetExtraDetails from "./components/TweetExtraDetails";
+import { WebSocketManager } from "./components/WebSocketManager";
 
 function App() {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
 
   return (
     <div className="bg-black h-screen w-screen ">
       {/* <StartPage/> */}
       {/* <LoginPage/> */}
 
-<Routes>
-<Route path="/" element={<StartPage/>}/>
-<Route path="/login" element={<LoginPage/>}/>
-<Route path="/signup" element={<SignupPage/>}/>
+      <Routes>
+        <Route path="/" element={<StartPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
-{/* <Route path="/test" element={<SearchBar/>}/> */}
+        {/* <Route path="/test" element={<SearchBar/>}/> */}
 
+        <Route element={<ProtectedRoute />}>
+          <Route path="/home" element={<Layout />}>
+            <Route path="profile" element={<Profile />} />
+            <Route index element={<Home />} />
+          </Route>
 
+          <Route path="/profile/:username" element={<Profile />} />
 
-<Route  element={<ProtectedRoute/>}>
+          <Route path="/post" element={<PostTweetCard />} />
+          <Route path="/post/comment/:postId" element={<PostTweetCard />} />
 
-<Route path="/home" element={<Layout/>}>
+          <Route path="/search" element={<Search />} />
+          {/* TweetExtraDetails */}
+          <Route path="/user/tweet" element={<TweetExtraDetails />} />
+          <Route path="/user/tweet/:userId" element={<TweetExtraDetails />} />
+        </Route>
+      </Routes>
 
-<Route path="profile" element={<Profile/>}/>
-<Route index element={<Home/>}/>
-
-</Route>
-
-
-{/* <Route path="/profile/:userId" element={<Profile/>}/> */}
-<Route path="/profile/:username" element={<Profile/>}/>
-
-<Route path="/post" element={<PostTweetCard/>}/>
-<Route path="/post/comment/:postId" element={<PostTweetCard/>}/>
-
-<Route path="/search" element={<Search/>}/>
-{/* TweetExtraDetails */}
-<Route path="/user/tweet" element={<TweetExtraDetails/>}/>
-<Route path="/user/tweet/:userId" element={<TweetExtraDetails/>}/>
-
-
-</Route>
-</Routes>
-
-
-        {/* <AnimatedComponent
-          show={true} 
-          duration={500}
-          blur={true}
-          className=" border border-blue-500/100 
-                  bg-blue-500/20  "
-        >
-          {"Message This message is for testing"}
-        </AnimatedComponent> */}
-
-     
     </div>
   );
 }

@@ -3,6 +3,10 @@ $$
 till here the work done and need to understand the working how the working
 
 
+[
+Final understand the infinite scrolll and websocket 
+]
+
 
 
 
@@ -20,8 +24,7 @@ banner of the user , Edit profile
 
 
 
-show comment in comment 
-  add the full name in the form in final stage 
+
 
 {
   ***
@@ -48,16 +51,119 @@ when post sucess fully get back or somthing
 
 
 
-when scroll tweets comein 10 twwets new / paganiation 
-
-
-
 
 Notificataion
 foryou and following tweet
 tweet  repost 
 
+
+
 when click on grok send user to the og grok
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  const fetchPosts = useCallback(async () => {
+    setLoading(true);
+    try {
+      let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+      // For subsequent requests, add the cursor to the URL
+      if (nextCursor) {
+        apiUrl += `?cursor=${nextCursor}`;
+      }
+      const response = await axios.get(apiUrl, { withCredentials: true });
+      // console.log("this is response",response)
+      const { posts: newPosts, nextCursor: newNextCursor } = response.data;
+
+      sestPosts((prevPosts) => [...prevPosts, ...newPosts]);
+      // Save the new cursor for the next fetch
+      setNextCursor(newNextCursor);
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+    }
+    setLoading(false);
+    setInitialLoad(false);
+  }, [nextCursor]);
+
+
+
+
+
+
+
+
+  const observer = useRef();
+
+  const lastPostElementRef = useCallback(
+    (node) => {
+      console.log("this is node ", node);
+      if (loading) return;
+
+      // ✅ FIXED: disconnect (with a 'c')
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        console.log(
+          "Observer triggered. Is intersecting?",
+          entries[0].isIntersecting,
+          entries
+        );
+        console.log("Is there a next cursor?", !!nextCursor);
+        if (entries[0].isIntersecting && nextCursor) {
+          console.log("✅ Conditions met! Fetching more posts.");
+          fetchPosts();
+        }
+      });
+
+      // ✅ FIXED: observe (with an 'e')
+      if (node) observer.current.observe(node);
+    },
+    [loading, nextCursor, fetchPosts]
+  );
+
+
+
+
+
+
+  useEffect(() => {
+    // Fetch the first page of posts when the component mounts
+    fetchPosts();
+  }, []);
+
+
+
+
+
 
 
 
