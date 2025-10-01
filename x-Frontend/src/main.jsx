@@ -21,7 +21,7 @@ createRoot(document.getElementById("root")).render(
           <QueryClientProvider client={queryClient}>
             <WebSocketManager />
             <App />
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </QueryClientProvider>
         </BrowserRouter>
       </PersistGate>

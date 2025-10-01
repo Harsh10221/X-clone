@@ -1,11 +1,13 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import userDataReducer from "../features/Slices/userSlice";
+import nofiticationReducer from "../features/Slices/notificationSlice"
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // 1. Combine your reducers into a single rootReducer object
 const rootReducer = combineReducers({
     user: userDataReducer,
+    notification : nofiticationReducer 
     // Add other reducers here if you have them
 });
 

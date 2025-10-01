@@ -16,22 +16,13 @@ function Profile() {
   const [isFollow, setIsFollow] = useState(false);
   const [isFollowedByYou, setIsFollowedByYou] = useState(null)
   
-  // const [isMenuVisible, setIsMenuVisible] = useState(false);
-  // const [isOtherUserProfile, setIsOtherUserProfile] = useState(null);
-  const userInfo = useSelector((state) => state.user.userInfo);
-  // JoinedDate.toDateString().slice(4,15)
-  // console.log("Thsis sit the formateed joined data",JoinedDate)
+   const userInfo = useSelector((state) => state.user.userInfo);
+
   const { username } = useParams();
-  // console.log("This is userinfo", userInfo._id);
+  console.log("This is userinfo", userInfo);
   
   const anotherUserProfileData = useLocation()?.state?.author;
-  // const isFollow = useLocation()?.state?.
-  // const anotherUserProfileData = 0
-  // console.log("this is from profile uselocation  ",useLocation())
-  // console.log("this is from profile   ",isFollowedByYou)
 
-
-  // console.log("This is params", anotherUserProfileData);
 
   const JoinedDate = new Date(
     anotherUserProfileData
@@ -41,22 +32,7 @@ function Profile() {
     .toDateString()
     .slice(4, 15);
 
-  // useEffect(() => {
-  //   // console.log("This si the username ",username)
-  //   axios
-  //     .get(`http://localhost:8000/api/v1/users/getuser-posts/${username}`, {
-  //       withCredentials: true,
-  //     })
-  //     .then(
-  //       (response) => setUserPosts(response.data.allPosts)
-  //       // console.log("this is response of all posts", response)
-  //     )
-  //     .catch((error) => console.error(error));
-  //   // return () => {
-  //   //   second
-  //   // }
-  // }, []);
-
+ 
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -194,8 +170,8 @@ function Profile() {
                 {" "}
                 <span className="text-white">
                   {anotherUserProfileData
-                    ? anotherUserProfileData.following
-                    : userInfo.following}
+                    ? anotherUserProfileData.followings
+                    : userInfo.followings}
                 </span>{" "}
                 Following{" "}
               </span>

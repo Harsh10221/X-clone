@@ -2,12 +2,13 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
+import cookie from "cookie";
 import { WebSocketServer } from "ws";
+import jwt from "jsonwebtoken";
 
 // require('dotenv').config();
 // In app.js or index.js
-import fs from "fs";
-import path from "path";
+
 
 const app = express();
 
@@ -25,56 +26,56 @@ app.use(express.static("public"));
 
 const server = http.createServer(app);
 
-//creating a websockt server and atteched it to the http server
-const wss = new WebSocketServer({ server });
+let decodedToken = null;
 
-//a map to store connections , mapping userid to websoket obj
+const verifyClient = (info, done) => {
+	const cookieString = info.req.headers.cookie || "";
+
+	// if (!cookieString) {
+	// 	throw new ApiError(400,"cookie must be provided ")
+	// }
+
+	const parsedCookie = cookie.parse(cookieString);
+
+	try {
+		decodedToken = jwt.verify(
+			parsedCookie.accessToken,
+			process.env.ACCESS_TOKEN_SECRET
+		);
+	} catch (error) {
+		// throw error;
+	}
+	// console.log(done);
+	done(true);
+};
+
+const wss = new WebSocketServer({ server, verifyClient });
+
 export const clients = new Map();
 
-
 wss.on("connection", (ws) => {
-
-	console.log("✅ Client connected");
+	// console.log("user connected");
 
 	ws.on("message", (message) => {
-
+		// console.log("this is messgae", JSON.parse(message));
 		try {
 			const data = JSON.parse(message);
-
-			if (data.type == "authenticate" && data.payload.userId) {
-				const userId = data.payload.userId;
-				clients.set(userId, ws);
-				
-				console.log("User authenticated and connected", userId);
+			if (data?.type == "authenticate") {
+				clients.set(decodedToken?._id, ws);
 			}
 		} catch (error) {
-			console.error("Error parsing message ", error);
+			console.log("there was a in authentaction of websocket error", error);
 		}
 	});
 
 	ws.on("close", () => {
-		for (const [userId, clientWs] of clients.entries()) {
-			if (clientWs === ws) {
-				clients.delete(userId);
-				console.log(`❌ User ${userId} disconnected.`);
-				break;
-			}
-		}
+		// console.log("connection closed");
+		clients.delete(decodedToken?._id);
 	});
-	ws.on("error", console.error);
 });
 
-
-
-//browser bundles the form data this middleware encode and
-// made available in our request.body
-
-
-//routes
-
 import userRouter from "./routes/user.routes.js";
-// import { json } from "body-parser";
-// import { JSON } from "mysql/lib/protocol/constants/types.js";
+import ApiError from "./utils/ApiError.js";
 
 app.use("/api/v1/users", userRouter);
 

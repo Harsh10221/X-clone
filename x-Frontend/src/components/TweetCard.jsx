@@ -135,7 +135,7 @@ function TweetCard({ tweetData }) {
               </span>
               <span className="mr-1 truncate inline-block align-middle max-w-28">
                 {" "}
-                @{tweetData?.author.userName}{" "}
+                @{tweetData?.author?.userName}{" "}
               </span>
               <span className="inline-block align-middle mr-1 ">·</span>
               <span className="inline-block align-middle mr-1 ">
@@ -182,20 +182,20 @@ function TweetCard({ tweetData }) {
               Show more
             </div>
           </div>
-          {tweetData?.media.urls.length == 0 ? (
+          {tweetData?.media?.urls?.length == 0 ? (
             <div></div>
           ) : (
             <div
               onClick={handleCenterDivClick}
               className={` prevent max-w-lg ${
-                tweetData?.media.urls.length > 1
+                tweetData?.media?.urls?.length > 1
                   ? "gap-0.5  grid grid-cols-2"
                   : null
               } 
             h-auto  mt-4 border border-[#595959] rounded-xl overflow-hidden`}
             >
               {tweetData?.media?.mediaType == "image"
-                ? tweetData?.media.urls.map((img) => (
+                ? tweetData?.media?.urls?.map((img) => (
                     <div
                       key={img}
                       onClick={() =>
@@ -211,7 +211,7 @@ function TweetCard({ tweetData }) {
                       />
                     </div>
                   ))
-                : tweetData?.media.urls.map((img) => (
+                : tweetData?.media?.urls?.map((img) => (
                     <div
                       key={img}
                       onClick={() =>

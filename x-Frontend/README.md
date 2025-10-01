@@ -3,16 +3,6 @@ $$
 till here the work done and need to understand the working how the working
 
 
-[
-Final understand the infinite scrolll and websocket 
-]
-
-
-
-
-what is custom hook and how to use them
-
-
 
 banner of the user , Edit profile
 
@@ -52,7 +42,7 @@ when post sucess fully get back or somthing
 
 
 
-Notificataion
+
 foryou and following tweet
 tweet  repost 
 

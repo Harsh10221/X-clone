@@ -38,82 +38,62 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
   //   return response.data;
   // };
 
-  // this was normal fetchpost
-  // const fetchPosts = useCallback(async () => {
-  //   setLoading(true);
+  {
+    // this was normal fetchpost
+    // const fetchPosts = useCallback(async () => {
+    //   setLoading(true);
+    //   try {
+    //     let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+    //     // console.log("this is next cursor ",nextCursor)
+    //     if (nextCursor) {
+    //       apiUrl += `?cursor=${nextCursor}`;
+    //     }
+    //     const response = await axios.get(apiUrl, { withCredentials: true });
+    //     const { posts: newPosts, nextCursor: newNextCursor } = response.data;
+    //     setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+    //     // console.log("this is new  next cursor ",newNextCursor)
+    //     // console.log("this is next cursor ",nextCursor)
+    //     setNextCursor(newNextCursor);
+    //   } catch (error) {
+    //     console.log("Failed to fetch posts", error);
+    //   }
+    //   setLoading(false);
+    //   setInitialLoad(false);
+    // }, [nextCursor]);
+    // console.log("this is next cursor outside of the function ",nextCursor)
+  }
+
+  // const fetchPosts = async ({ pageParam = null }) => {
   //   try {
   //     let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
-  //     // console.log("this is next cursor ",nextCursor)
-  //     if (nextCursor) {
-  //       apiUrl += `?cursor=${nextCursor}`;
+
+  //     if (pageParam) {
+  //       apiUrl += `?cursor=${pageParam}`;
   //     }
-
-  //     const response = await axios.get(apiUrl, { withCredentials: true });
-  //     const { posts: newPosts, nextCursor: newNextCursor } = response.data;
-
-  //     setPosts((prevPosts) => [...prevPosts, ...newPosts]);
-
-  //     // console.log("this is new  next cursor ",newNextCursor)
-  //     // console.log("this is next cursor ",nextCursor)
-  //     setNextCursor(newNextCursor);
+  //     const { data } = await axios.get(apiUrl, { withCredentials: true });
+  //     return data;
   //   } catch (error) {
-  //     console.log("Failed to fetch posts", error);
+  //     console.log("There was a error while fetching post", error);
   //   }
-  //   setLoading(false);
-  //   setInitialLoad(false);
-  // }, [nextCursor]);
+  // };
 
-  // console.log("this is next cursor outside of the function ",nextCursor)
+  // const observer = useRef();
 
-  const fetchPosts = async ({ pageParam = null }) => {
-    try {
-      let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+  // const lastPostElementRef = useCallback(
+  //   (node) => {
+  //     if (isFetchingNextPage) return;
 
-      if (pageParam) {
-        apiUrl += `?cursor=${pageParam}`;
-      }
-      const { data } = await axios.get(apiUrl, { withCredentials: true });
-      return data;
-    } catch (error) {
-      console.log("There was a error while fetching post", error);
-    }
-  };
+  //     if (observer.current) observer.current.disconnect();
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["tweets"],
-    queryFn: fetchPosts,
-    initialPageParam: null, // The first page has no cursor
-    getNextPageParam: (lastPage, allPages) => {
-      // ADD THIS LOG
-      // console.log("Last page data:", lastPage);
-      return lastPage.nextCursor ?? undefined;
-    }, // The `?? undefined` tells the query there are no more pages if nextCursor is null
-  });
-
-  const observer = useRef();
-
-  const lastPostElementRef = useCallback(
-    (node) => {
-      if (isFetchingNextPage) return;
-
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasNextPage) {
-          fetchNextPage();
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [isFetchingNextPage, hasNextPage, fetchNextPage]
-  );
+  //     observer.current = new IntersectionObserver((entries) => {
+  //       if (entries[0].isIntersecting && hasNextPage) {
+  //         fetchNextPage();
+  //       }
+  //     });
+  //     if (node) observer.current.observe(node);
+  //   },
+  //   [isFetchingNextPage, hasNextPage, fetchNextPage]
+  // );
 
   // useEffect(() => {
   //   fetchPosts();
@@ -146,6 +126,49 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     }
   };
 
+  const fetchPosts = async ({ pageParam = null } = {}) => {
+    try {
+      // console.log("THis is pageproma",pageParam)
+
+      let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+
+      if (pageParam) {
+        apiUrl += `?cursor=${pageParam}`;
+      }
+
+      const { data } = await axios.get(apiUrl, { withCredentials: true });
+      return data;
+    } catch (error) {
+      console.error("There is a error while fetching, Feed Posts", error);
+    }
+  };
+
+  const { fetchNextPage, isFetchingNextPage, hasNextPage, data } =
+    useInfiniteQuery({
+      queryKey: ["tweets"],
+      queryFn: fetchPosts,
+      initialPageParam: null,
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage.nextCursor ?? undefined;
+      },
+    });
+
+  const observer = useRef();
+
+  const lastPostElementRef = useCallback((node) => {
+    if (isFetchingNextPage) return;
+
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      // console.log(entries);
+      if (entries[0].isIntersecting) {
+        fetchNextPage();
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, []);
+
   // const [isFollowedByYou, setIsFollowedByYou] = useState(null)
 
   const {
@@ -157,17 +180,6 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     queryFn: handleUserProfilePosts,
     enabled: !!userNameFromUrl,
   });
-
-  // console.log("this is ", userPosts);
-
-  // console.log("this is ");
-
-  // const { data, isPending, error } = useQuery({
-  //   queryKey: ,
-  //   queryFn: ,
-  // });
-
-  // console.log("This is observer ref", observer);
 
   return (
     <div className="pb-12">
