@@ -7,6 +7,8 @@ import { useFormContext } from "react-hook-form";
 import AnimatedComponent from "../../../utils/ErrorAnimatedComponent";
 import { useNavigate } from "react-router-dom";
 import { useResponsive } from "../hooks/useResponsive";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 function LoginStage1({
   errorMsgStage1,
@@ -15,9 +17,9 @@ function LoginStage1({
   handleAccountLogin,
   setErrorMsgStage1,
 }) {
+  const navigate = useNavigate();
+  const { isMobile } = useResponsive();
 
-  const navigate = useNavigate()
-  const { isMobile } = useResponsive()
   // const [first, setfirst] = useState(second)
 
   const {
@@ -34,9 +36,36 @@ function LoginStage1({
   }
 
   const backToStarPage = () => {
-    navigate("/")
-  }
+    navigate("/");
+  };
 
+  const handleLoginSuccess = async (creadintalResponse) => {
+    console.log(creadintalResponse);
+
+    const idToken = creadintalResponse.credential;
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/users/google-login",
+        {
+          token: idToken,
+        }
+      );
+
+      console.log("Login succssful", response.data);
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const handleLoginError = () => {
+    console.log("Login Failed");
+  };
+
+  const login = useGoogleLogin({
+    onSuccess: handleLoginSuccess,
+    onError: handleLoginError,
+  });
 
   // console.log("This is error", errors);
 
@@ -54,13 +83,13 @@ function LoginStage1({
       </AnimatedComponent>
 
       <div className="cursor-pointer relative flex items-center    ">
-        <XMarkIcon 
-        // onClick={handleAccountLogin}
-        onClick={isMobile ? backToStarPage : handleAccountLogin}
+        <XMarkIcon
+          // onClick={handleAccountLogin}
+          onClick={isMobile ? backToStarPage : handleAccountLogin}
+          // onClick={ ()=>{ navigate("/") } }
 
-        // onClick={ ()=>{ navigate("/") } }
-
-         className=" h-6  w-6 text-white" />
+          className=" h-6  w-6 text-white"
+        />
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ">
           <Xsvg />
         </div>
@@ -75,7 +104,16 @@ function LoginStage1({
           </div>
         </div>
         <div className=" flex flex-col gap-2 ">
-          <button className="bg-white flex w-72 gap-2 h-10 font-roboto items-center justify-center rounded-3xl ">
+          {/* <div className=" w-full  rounded-full"> */}
+          {/* <GoogleLogin
+              onSuccess={handleLoginSuccess}
+              onError={handleLoginError}
+            /> */}
+          {/* </div> */}
+          <button
+            onClick={login}
+            className="bg-white flex w-72 gap-2 h-10 font-roboto items-center justify-center rounded-3xl "
+          >
             <GoogleIcon /> Sign up with Google
           </button>
 
@@ -110,7 +148,14 @@ function LoginStage1({
 
         <div className="text-[#b8b8b8] px-7 w-full font-roboto ">
           Don't have an account?{" "}
-          <span onClick={ ()=>{ navigate("/") } } className="text-blue-400  ">Sign up</span>
+          <span
+            onClick={() => {
+              navigate("/");
+            }}
+            className="text-blue-400  "
+          >
+            Sign up
+          </span>
         </div>
         {/* </div> */}
       </div>

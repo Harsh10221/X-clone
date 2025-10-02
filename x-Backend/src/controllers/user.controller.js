@@ -1,4 +1,6 @@
 // import cookieParser from "cookie-parser";
+import { OAuth2Client } from "google-auth-library";
+import { clients } from "../app.js";
 import { User } from "../models/user.model.js";
 import otpStore from "../otpStore.js";
 import ApiError from "../utils/ApiError.js";
@@ -6,6 +8,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 // import {semnd}
 import sendCodeAndCheck from "../utils/otpCheck.js";
+import { providers } from "web3";
 // cookieParser
 
 const checkUserEmail = asyncHandler(async (req, res) => {
@@ -57,7 +60,8 @@ const registerUser = asyncHandler(async (req, res) => {
 	// console.log(req.files.avatar[0].path)
 	console.log("This is req.body", req.body);
 
-	const { userName,fullName, password, email, bio, year, month, day } = req.body;
+	const { userName, fullName, password, email, bio, year, month, day } =
+		req.body;
 
 	const dateOfBirth = new Date(year, month - 1, day);
 
@@ -222,7 +226,6 @@ const checkUserPassword = asyncHandler(async (req, res) => {
 	// console.log("this is rq.body",req.body)
 	const { password, emailorUsername } = req.body;
 
-
 	// console.log("This is req.body", req.body);
 	// console.log("This is email", emailorUsername)
 	// console.log("This is hello form checkpass")
@@ -363,30 +366,56 @@ const generateOtp = asyncHandler(async (req, res) => {
 	});
 });
 
-const searchForUser = asyncHandler(async(req,res)=>{
-	const searchQuery = req.params.query
+const searchForUser = asyncHandler(async (req, res) => {
+	const searchQuery = req.params.query;
 	// console.log("thi is searchQuery",searchQuery)
-	
+
 	if (!searchQuery) {
-		throw new ApiError(400,"Search query is empty")
+		throw new ApiError(400, "Search query is empty");
 	}
-	
-	const searchRegex = new RegExp(searchQuery,'i')
-	
+
+	const searchRegex = new RegExp(searchQuery, "i");
+
 	// console.log("thi is searchregex",searchRegex)
 
-
 	const results = await User.find({
-		userName:{$regex:searchQuery}
-	}).select("-refreshToken -password -email -updatedAt -__v ")
+		userName: { $regex: searchQuery },
+	}).select("-refreshToken -password -email -updatedAt -__v ");
 
 	return res.status(200).json({
-		message:"ok",
-		results
-	})
+		message: "ok",
+		results,
+	});
+});
+
+const googleLogin = asyncHandler(async (req, res) => {
+	const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+	const { token } = req.body;
+
+	console.log("THis is token ", token);
+
+	const ticket = await client.verifyIdToken({
+		idToken: token,
+		audience: process.env.GOOGLE_CLIENT_ID,
+	});
+
+	const payload = ticket.getPayload();
+	const {email,name,picture} = payload
+
+	let user = await User.findOne({email})
+
+	if (!user) {
+		user = await User.create({
+			email,
+			userName: name,
+		})
+		
+	}
 
 
-})
+
+});
 
 export {
 	registerUser,
@@ -398,5 +427,6 @@ export {
 	checkUserName,
 	checkUserExist,
 	checkUserPassword,
-	searchForUser
+	searchForUser,
+	googleLogin
 };

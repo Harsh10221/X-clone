@@ -10,8 +10,11 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./index.css";
 import App from "./App.jsx";
 import { WebSocketManager } from "./components/WebSocketManager.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const queryClient = new QueryClient();
+const clientId =
+  "255486478561-4u2d0c9evkb518svr1due3tra3o8juum.apps.googleusercontent.com";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -20,7 +23,9 @@ createRoot(document.getElementById("root")).render(
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
             <WebSocketManager />
-            <App />
+            <GoogleOAuthProvider clientId={clientId}>
+              <App />
+            </GoogleOAuthProvider>
             {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </QueryClientProvider>
         </BrowserRouter>

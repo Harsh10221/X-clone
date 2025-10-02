@@ -21,6 +21,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Search from "./features/Home/components/Search";
 import TweetExtraDetails from "./components/TweetExtraDetails";
 import Notification from "./features/Home/components/Notification";
+import EditProfile from "./features/profile/components/EditProfile";
 
 function App() {
   // const [count, setCount] = useState(0);
@@ -44,7 +45,9 @@ function App() {
           </Route>
 
           <Route path="/profile/:username" element={<Profile />} />
-
+    
+          <Route path="/edit-profile" element={<EditProfile />} />
+    
           <Route path="/post" element={<PostTweetCard />} />
           <Route path="/post/comment/:postId" element={<PostTweetCard />} />
 

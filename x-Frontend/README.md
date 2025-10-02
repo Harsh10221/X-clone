@@ -8,7 +8,7 @@ banner of the user , Edit profile
 
 
 
-[Google login]
+
 
 
 
@@ -48,7 +48,8 @@ tweet  repost
 
 
 
-when click on grok send user to the og grok
+when click on grok send user 
+to the og grok
 
 
 

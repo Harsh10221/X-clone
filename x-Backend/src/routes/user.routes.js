@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkUserEmail, checkUserExist, checkUserName, checkUserPassword, generateOtp, loginUser, logoutUser, otpCheck, registerUser, searchForUser } from "../controllers/user.controller.js";
+import { checkUserEmail, checkUserExist, checkUserName, checkUserPassword, generateOtp, googleLogin, loginUser, logoutUser, otpCheck, registerUser, searchForUser } from "../controllers/user.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import verifyJwt from "../middlewares/auth.middleware.js";
 import { createTweet, deleteTweet, getfeedTweet, getPostComments, getUserTweet } from "../controllers/tweet.controller.js";
@@ -29,6 +29,7 @@ router.route("/check-password").post(checkUserPassword)
 router.route("/generate-refreshtoken").get(generateRefreshToken)
 
 
+router.route("/google-login").post(googleLogin)
 
 router.route("/login").post(loginUser)
 router.route("/logout").post(logoutUser)
