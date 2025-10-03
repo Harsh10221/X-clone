@@ -5,6 +5,7 @@ import { useFormContext } from "react-hook-form";
 import AnimatedComponent from "../../../utils/ErrorAnimatedComponent";
 
 function Stage5({ setstage5Error, stage5Error }) {
+  console.log("i am from stage 5 error ",stage5Error)
   const [iserror, setIserror] = useState(false);
 
   useEffect(() => {
@@ -39,21 +40,18 @@ function Stage5({ setstage5Error, stage5Error }) {
         blur={true}
         className="absolute top-0 border border-blue-600/100 
                   bg-black/80 
-                 
-                  
-                  
+  
                   "
       >
         {stage5Error}
       </AnimatedComponent>
-     
+
       <div className=" flex justify-center">
         <Xsvg />
       </div>
 
       <div className="   flex-1 flex justify-between flex-col">
         <div className=" gap-4 flex flex-col ">
-        
           <div className="text-white text-2xl md:px-0 px-5 mt-1  font-bold ">
             What should we call <br /> you ?
           </div>

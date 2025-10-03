@@ -5,7 +5,7 @@ import {
   PencilIcon,
   PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import default_profile from "../../../assets/default_profile.png";
 import InputBox from "../../auth/components/InputBox";
 import { useForm } from "react-hook-form";
@@ -13,8 +13,10 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { loginSuccess } from "../../Slices/userSlice";
+import LoadingAnimation from "../../../utils/LoadingAnimation";
 
 function EditProfile() {
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const avatarRef = useRef(null);
@@ -49,7 +51,8 @@ function EditProfile() {
   const { ref: bannerRegisterRef, ...bannerRest } = register("banner");
 
   const onSubmit = async (data) => {
-    console.log(data);
+    setIsLoading(true)
+    // console.log(data);
 
     for (const element in data) {
       if (data[element] instanceof FileList) {
@@ -60,17 +63,18 @@ function EditProfile() {
       }
     }
 
-    console.log("THis is datatoupload",dataToUpload.entries())
+    console.log("THis is datatoupload", dataToUpload.entries());
 
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/users/update-profile",
-         dataToUpload ,
+        dataToUpload,
         { withCredentials: true }
       );
       if (response.statusText == "OK") {
         dispatch(loginSuccess(response.data.updatedData));
         navigate("/home");
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("There is a error while updating profile", error);
@@ -92,7 +96,7 @@ function EditProfile() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className="w-screen h-screen  " onSubmit={handleSubmit(onSubmit)}>
       <input
         type="file"
         accept="image/*"
@@ -116,10 +120,16 @@ function EditProfile() {
         accept="image/*"
       />
 
-      <div className="w-full h-full bg-black overflow-y-auto ">
-        <div className="">
-          {/* <PencilIcon className="text-white w-6 h-6" /> */}
+      <div
+        className={
+          isLoading ? "  bg-[#44444471] z-10 absolute h-full w-full " : "hidden"
+        }
+      >
+        <LoadingAnimation />
+      </div>
 
+      <div className="w-full h-full relative  bg-black overflow-y-auto ">
+        <div className="">
           <div
             onClick={handleClickOnAvatar}
             className="  absolute w-14 h-14 top-36 left-3   "

@@ -90,7 +90,7 @@ const checkUserName = asyncHandler(async (req, res) => {
 
 	const result = await User.findOne({ userName });
 
-	if (result) {
+	if (result.userName == userName) {
 		return res.status(400).json({
 			message: "Username is already taken",
 		});
@@ -104,15 +104,15 @@ const checkUserName = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
 	// console.log(req.body)
 	// console.log(req.files.avatar[0].path)
-	console.log("This is req.body", req.body);
+	// console.log("This is req.body", req.body);
 
 	const { userName, fullName, password, email, bio, year, month, day } =
 		req.body;
 
 	const dateOfBirth = new Date(year, month - 1, day);
 
-	console.log("This is date of birth", dateOfBirth);
-	console.log("This is This is uername", userName);
+	// console.log("This is date of birth", dateOfBirth);
+	// console.log("This is This is uername", userName);
 
 	if (!userName || !password || !email) {
 		const error = new Error("All fields are required");
@@ -159,7 +159,7 @@ const registerUser = asyncHandler(async (req, res) => {
 		bio,
 	});
 
-	console.log("This is user", user);
+	// console.log("This is user", user);
 
 	return res.json({
 		statuCode: 201,

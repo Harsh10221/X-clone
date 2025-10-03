@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")).render(
             <GoogleOAuthProvider clientId={clientId}>
               <App />
             </GoogleOAuthProvider>
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+            <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
         </BrowserRouter>
       </PersistGate>

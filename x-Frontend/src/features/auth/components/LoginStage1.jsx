@@ -111,6 +111,7 @@ function LoginStage1({
             /> */}
           {/* </div> */}
           <button
+          type="button"
             onClick={login}
             className="bg-white flex w-72 gap-2 h-10 font-roboto items-center justify-center rounded-3xl "
           >

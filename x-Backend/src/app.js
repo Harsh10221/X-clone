@@ -64,7 +64,7 @@ wss.on("connection", (ws) => {
 				clients.set(decodedToken?._id, ws);
 			}
 		} catch (error) {
-			console.log("there was a in authentaction of websocket error", error);
+			console.error("there was a in authentaction of websocket error", error);
 		}
 	});
 

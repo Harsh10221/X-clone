@@ -3,7 +3,7 @@ $$
 till here the work done and need to understand the working how the working
 
 
-
+why the userprofile post are fetching in the postfeed ?
 
 
 
@@ -14,17 +14,15 @@ When on the desktop the error msg should be in a little correct place
 and on the password field the error msg is little bad
 }
 
+
 {loadings
 
-when login loading for home 
+new login user , banner default , fullname issue fullname is not there. 
 
-when in profile taking time need loading in posts 
-
-when editprofile after puting details it taking time need loading
-
-search for user in there a spinner 
+and if login google is going to do then , the default profile image is must , and the username and the fullname then will be same if there are no 2 names 
 
 when i back from the home screen i got at the top of the home component , we can prevent this by going one step back in navigation history , the browser stack when we go to any path the browser put the details in stack with push and pop , but with navigate we push 
+
 
 when on last stage when the usernamae was enter the registretion is taking time need loading when the username is unique
 

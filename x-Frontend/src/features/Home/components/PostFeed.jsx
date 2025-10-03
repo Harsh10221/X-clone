@@ -3,6 +3,7 @@ import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import TweetCard from "../../../components/TweetCard";
 import axios, { Axios } from "axios";
 import { useParams } from "react-router-dom";
+import LoadingAnimation from "../../../utils/LoadingAnimation";
 
 function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
   // const [latestTweets, setlatestTweets] = useState(null);
@@ -143,7 +144,7 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     }
   };
 
-  const { fetchNextPage, isFetchingNextPage, hasNextPage, data } =
+  const { fetchNextPage, isLoading, isFetchingNextPage, hasNextPage, data } =
     useInfiniteQuery({
       queryKey: ["tweets"],
       queryFn: fetchPosts,
@@ -168,11 +169,12 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     });
     if (node) observer.current.observe(node);
   }, []);
-
+  console.log("i am isloading , from infinite query", isLoading);
   // const [isFollowedByYou, setIsFollowedByYou] = useState(null)
 
   const {
     data: userPosts,
+    isLoading: userProfileLoading,
     isPending: postsPending,
     error: postsError,
   } = useQuery({
@@ -184,9 +186,19 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
   return (
     <div className="pb-12">
       {userNameFromUrl ? (
-        userPosts?.result?.map((card) =>
-          card.parentTweetId ? null : <TweetCard tweetData={card} />
+        userProfileLoading ? (
+          <div className="w-full h-60  ">
+            <LoadingAnimation />
+          </div>
+        ) : (
+          userPosts?.result?.map((card) =>
+            card.parentTweetId ? null : <TweetCard tweetData={card} />
+          )
         )
+      ) : isLoading ? (
+        <div className="w-full h-screen bg-black ">
+          <LoadingAnimation />
+        </div>
       ) : (
         <div>
           {data?.pages?.map((page, pageIndex) => (

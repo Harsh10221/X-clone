@@ -16,7 +16,7 @@ function Search() {
   const [results, setResults] = useState([]);
   const [isLodading, setIsLodading] = useState(false);
 
-  // console.log("this is input ", results);
+  console.log("this is input ", results);
 
   useEffect(() => {
     const deDouncingFn = setTimeout(() => {
@@ -40,8 +40,7 @@ function Search() {
   };
 
   return (
-    //  <form onSubmit={handleSubmit(onSubmit)}>
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full  w-full flex flex-col">
       <div className="w-full h-auto flex items-center justify-between p-3">
         <ArrowLeftIcon
           onClick={handleBackToHome}
@@ -54,16 +53,16 @@ function Search() {
       </div>
 
       <div className=" flex-1  w-full ">
-        {results.map((item) => (
-          // <div className="w- " >
-            
-            <MiniUserProfile item={item}/>
-          // </div>
-          // <div className="text-white w-full bg-red-500 mb-5 p-5 " >hello</div>
-        ))}
+        {results.length > 0 ? (
+          results.map((item) => <MiniUserProfile item={item} />)
+        ) : (
+          <div className="w-full h-full flex items-start justify-center text-white ">
+            {" "}
+            No user found with this username{" "}
+          </div>
+        )}
       </div>
     </div>
-    // </form>
   );
 }
 

@@ -151,17 +151,18 @@ function SignupPage({ handleAccountCreate }) {
     // console.log("this is getvalues only", methods.getValues());
 
     try {
+      console.log("this is from sigup page",methods.getValues())
       const response = await axios.post(
         "http://localhost:8000/api/v1/users/check-username",
         {
-          userName: methods.getValues().username,
+          userName: methods.getValues().userName,
         }
       );
 
       console.log("this is response", response);
     } catch (error) {
       setstage5Error(error.response.data.message);
-      console.log("This is error", error);
+      console.error("This is error", error);
       return error.response.data.message;
     }
   };

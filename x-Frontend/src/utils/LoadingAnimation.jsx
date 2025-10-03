@@ -4,7 +4,7 @@ import React from "react";
 
 function LoadingAnimation() {
   return (
-    <div>
+    <div className="w-full flex items-center justify-center h-full" >
       <OrbitProgress
         dense
         color="#0045d5"
