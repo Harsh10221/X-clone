@@ -4,15 +4,6 @@ till here the work done and need to understand the working how the working
 
 
 
-banner of the user , Edit profile
-
-
-
-
-
-
-
-
 
 
 
@@ -25,13 +16,22 @@ and on the password field the error msg is little bad
 
 {loadings
 
-  when on last stage when the usernamae was enter the registretion is taking time need loading when the username is unique
+when login loading for home 
+
+when in profile taking time need loading in posts 
+
+when editprofile after puting details it taking time need loading
+
+search for user in there a spinner 
+
+when i back from the home screen i got at the top of the home component , we can prevent this by going one step back in navigation history , the browser stack when we go to any path the browser put the details in stack with push and pop , but with navigate we push 
+
+when on last stage when the usernamae was enter the registretion is taking time need loading when the username is unique
 
 When te user is logedinh and the backend is off , the user can go to the home route need to do somthing // {loading spinner }
 
 default image show until the image is fully loaded
 
-when post sucess fully get back or somthing
 
 
 }
@@ -44,11 +44,11 @@ when post sucess fully get back or somthing
 
 
 foryou and following tweet
-tweet  repost 
+tweet  repost
 
 
 
-when click on grok send user 
+when click on grok send user
 to the og grok
 
 

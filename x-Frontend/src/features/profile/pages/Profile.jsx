@@ -14,15 +14,14 @@ function Profile() {
   const [activefilter, setActivefilter] = useState("Posts");
   const [userPosts, setUserPosts] = useState([]);
   const [isFollow, setIsFollow] = useState(false);
-  const [isFollowedByYou, setIsFollowedByYou] = useState(null)
-  
-   const userInfo = useSelector((state) => state.user.userInfo);
+  const [isFollowedByYou, setIsFollowedByYou] = useState(null);
+
+  const userInfo = useSelector((state) => state.user.userInfo);
 
   const { username } = useParams();
-  console.log("This is userinfo", userInfo);
-  
-  const anotherUserProfileData = useLocation()?.state?.author;
+  // console.log("This is userinfo", userInfo);
 
+  const anotherUserProfileData = useLocation()?.state?.author;
 
   const JoinedDate = new Date(
     anotherUserProfileData
@@ -32,7 +31,6 @@ function Profile() {
     .toDateString()
     .slice(4, 15);
 
- 
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -40,8 +38,8 @@ function Profile() {
   };
 
   const handleGetFollowStatusFromChild = (status) => {
-    setIsFollowedByYou(status)
-  }
+    setIsFollowedByYou(status);
+  };
 
   const handleFollowUser = () => {
     axios
@@ -73,6 +71,10 @@ function Profile() {
       .catch((error) => console.error(error));
   };
 
+  const handleProfileUpdate = () => {
+    navigate("/edit-profile");
+  };
+
   const filterOptions = [
     "Posts",
     "Replies",
@@ -81,7 +83,6 @@ function Profile() {
     "Media",
     "Like",
   ];
-
 
   return (
     <div className="relative md:w-2/5  w-full h-full flex  flex-col  ">
@@ -100,20 +101,30 @@ function Profile() {
         </div>
       </div>
 
-      <div className="flex-1 scrollbar-hide overflow-y-auto">
-        <div className="bg-gray-600 relative h-32">
-          banner
+      <div className="flex-1 relative scrollbar-hide overflow-y-auto">
+        <div className="  h-32">
           <img
-            className="h-16 rounded-full absolute -bottom-8 left-5  "
+            className="w-full h-full"
             src={
               anotherUserProfileData
-                ? anotherUserProfileData.avatarUrl
-                : userInfo.avatarUrl
+                ? anotherUserProfileData.bannerUrl
+                : userInfo?.bannerUrl
             }
             alt=""
             srcSet=""
           />
         </div>
+
+        <img
+          className="h-14 w-14 rounded-full absolute top-24 left-3  "
+          src={
+            anotherUserProfileData
+              ? anotherUserProfileData.avatarUrl
+              : userInfo.avatarUrl
+          }
+          alt=""
+          srcSet=""
+        />
 
         <div className=" h-44">
           <div className="flex p-2 px-4   justify-between">
@@ -138,6 +149,7 @@ function Profile() {
             ) : (
               <button
                 className={`bg-transparent  border  w-28 h-8 rounded-2xl font-semibold text-white`}
+                onClick={handleProfileUpdate}
               >
                 Edit Profile
               </button>
@@ -149,7 +161,7 @@ function Profile() {
               <div className="font-semibold text-white text-lg  ">
                 {anotherUserProfileData
                   ? anotherUserProfileData.userName
-                  : userInfo.userName}
+                  : userInfo.fullName}
               </div>
               <div className="">
                 @
@@ -196,15 +208,15 @@ function Profile() {
         </div>
 
         <div className="flex-1  w-full bg-black  ">
-         
-          <PostFeed handleGetFollowStatusFromChild={handleGetFollowStatusFromChild} setIsFollowedByYou={setIsFollowedByYou}   />
+          <PostFeed
+            handleGetFollowStatusFromChild={handleGetFollowStatusFromChild}
+            setIsFollowedByYou={setIsFollowedByYou}
+          />
         </div>
       </div>
-
       
     </div>
   );
 }
 
 export default Profile;
-

@@ -9,6 +9,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 // import {semnd}
 import sendCodeAndCheck from "../utils/otpCheck.js";
 import { providers } from "web3";
+import ApiResponse from "../utils/ApiResponse.js";
 // cookieParser
 
 const checkUserEmail = asyncHandler(async (req, res) => {
@@ -36,6 +37,51 @@ const checkUserEmail = asyncHandler(async (req, res) => {
 	return res.status(200).json({
 		message: "User is not Exist",
 		statusCode: 200,
+	});
+});
+
+const updateProfile = asyncHandler(async (req, res) => {
+	const {
+		username: userName,
+		name: fullName,
+		bio,
+		email,
+		location,
+		website,
+	} = req.body;
+
+	const { avatar, banner } = req.files;
+
+	const newDataToUpdate = {
+		userName,
+		fullName,
+		bio,
+		email,
+		location,
+		website,
+	};
+
+	if (avatar?.length > 0) {
+		console.log("inside avatar lentgh ")
+		const cloudinaryAvatarResponse = await uploadOnCloudinary(avatar[0]?.path);
+		newDataToUpdate.avatarUrl = cloudinaryAvatarResponse.url;
+	}
+	if (banner?.length > 0) {
+		console.log("inside banner lentgh ")
+		const cloudinaryBannerResponse = await uploadOnCloudinary(banner[0]?.path);
+		newDataToUpdate.bannerUrl = cloudinaryBannerResponse.url;
+	}
+
+	const result = await User.findByIdAndUpdate(
+		req.user._id,
+		{ $set: newDataToUpdate },
+		{
+			new: true,
+		}
+	);
+	return res.json({
+		message: "Profile update successfully",
+		updatedData: result,
 	});
 });
 
@@ -145,10 +191,7 @@ const loginUser = asyncHandler(async (req, res) => {
 		error.statusCode = 401;
 		throw error;
 	}
-	// let userData = user
-	// delete userData.password
-	// delete userData.updatedAt
-	// // userData.delete = updatedAt
+
 	let userData = user.toObject();
 	delete userData.password;
 	delete userData.updatedAt;
@@ -401,20 +444,16 @@ const googleLogin = asyncHandler(async (req, res) => {
 	});
 
 	const payload = ticket.getPayload();
-	const {email,name,picture} = payload
+	const { email, name, picture } = payload;
 
-	let user = await User.findOne({email})
+	let user = await User.findOne({ email });
 
 	if (!user) {
 		user = await User.create({
 			email,
 			userName: name,
-		})
-		
+		});
 	}
-
-
-
 });
 
 export {
@@ -428,5 +467,6 @@ export {
 	checkUserExist,
 	checkUserPassword,
 	searchForUser,
-	googleLogin
+	googleLogin,
+	updateProfile,
 };

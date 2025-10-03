@@ -149,7 +149,7 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
       queryFn: fetchPosts,
       initialPageParam: null,
       getNextPageParam: (lastPage, allPages) => {
-        return lastPage.nextCursor ?? undefined;
+        return lastPage?.nextCursor ?? undefined;
       },
     });
 
@@ -191,7 +191,7 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
         <div>
           {data?.pages?.map((page, pageIndex) => (
             <React.Fragment key={pageIndex}>
-              {page.posts.map((post, postIndex) => {
+              {page?.posts?.map((post, postIndex) => {
                 // Check if this is the last post on the last page
                 const isLastPost =
                   pageIndex === data.pages.length - 1 &&

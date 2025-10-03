@@ -58,7 +58,7 @@ export const WebSocketManager = () => {
   });
 
   useEffect(() => {
-    // console.log("This was message", lastJsonMessage);
+    console.log("This was message", lastJsonMessage);
     dispatch(postNotification(lastJsonMessage?.payload));
   }, [lastJsonMessage]);
 

@@ -8,10 +8,7 @@ import path from "path";
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		// const tmpDir = path.join(process.cwd(), "public", "tmp");
-		// console.log("Multer writing to:", tmpDir); // 👈 log it
-		// // cb(null, path.join(process.cwd(), "public", "tmp"));
-		// cb(null, tmpDir)
+		// console.log("I am from multer",file)
 		cb(null, "./public/tmp");
 	},
 	filename: function (req, file, cb) {

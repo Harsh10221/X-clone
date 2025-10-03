@@ -62,7 +62,10 @@ const createTweet = asyncHandler(async (req, res) => {
 
 		// const followers = author.followers;
 
-		const tweetData = await Tweet.findById(newTweet._id).populate("author","-password -__v -email -updatedAt -refreshToken ");
+		const tweetData = await Tweet.findById(newTweet._id).populate(
+			"author",
+			"-password -__v -email -updatedAt -refreshToken "
+		);
 		// console.log("This is tweetdata",tweetData)
 
 		const notification = {
@@ -83,6 +86,8 @@ const createTweet = asyncHandler(async (req, res) => {
 
 					followerSocket.send(JSON.stringify(notification));
 				}
+			} else {
+				console.log("i am not sending message sorry from websocket ");
 			}
 		});
 	} catch (error) {

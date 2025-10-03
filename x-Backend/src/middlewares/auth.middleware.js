@@ -13,7 +13,7 @@ import { User } from "../models/user.model.js"
 
 const verifyJwt = async (req, res, next) => {
     try {
-
+        // console.log("i run successfully auth middleware")
         const accessToken = req.cookies.accessToken
 
         // console.log("This is a  ccesstoken ",accessToken)
