@@ -21,7 +21,7 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     // console.log("hello from handleuserprofile", userNameFromUrl);
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/users/getuser-posts/${userNameFromUrl}`,
+        `https://x-clone-on81.onrender.com/getuser-posts/${userNameFromUrl}`,
         {
           withCredentials: true,
         }
@@ -39,7 +39,7 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     try {
       // console.log("THis is pageproma",pageParam)
 
-      let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+      let apiUrl = `https://x-clone-on81.onrender.com/get-latest-tweets`;
 
       if (pageParam) {
         apiUrl += `?cursor=${pageParam}`;

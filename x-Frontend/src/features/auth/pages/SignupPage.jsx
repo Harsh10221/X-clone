@@ -35,7 +35,7 @@ function SignupPage({ handleAccountCreate }) {
   const getOtp = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/generate-otp",
+        "https://x-clone-on81.onrender.com/generate-otp",
         {
           method: "POST",
           headers: {
@@ -77,7 +77,7 @@ function SignupPage({ handleAccountCreate }) {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/v1/users/check-email",
+        "https://x-clone-on81.onrender.com/check-email",
         {
           method: "POST",
           headers: {
@@ -117,7 +117,7 @@ function SignupPage({ handleAccountCreate }) {
   const verifyOtp = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/check-otp",
+        "https://x-clone-on81.onrender.com/check-otp",
         {
           email: methods.getValues().email,
           otp: methods.getValues().otp,
@@ -150,7 +150,7 @@ function SignupPage({ handleAccountCreate }) {
     try {
       console.log("this is from sigup page", methods.getValues());
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/check-username",
+        "https://x-clone-on81.onrender.com/check-username",
         {
           userName: methods.getValues().userName,
         }
@@ -221,7 +221,7 @@ function SignupPage({ handleAccountCreate }) {
 
     try {
       const registerResponse = await axios.post(
-        "http://localhost:8000/api/v1/users/register",
+        "https://x-clone-on81.onrender.com/register",
         dataToUpload
       );
 

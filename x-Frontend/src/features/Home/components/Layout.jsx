@@ -22,7 +22,7 @@ function Layout() {
       setIsError(null);
       if (searchTerm) {
         axios
-          .get(`http://localhost:8000/api/v1/users/find-user/${searchTerm}`)
+          .get(`https://x-clone-on81.onrender.com/find-user/${searchTerm}`)
           .then((response) => setResults(response.data))
           .catch((err) => setIsError(err.response.data));
       }

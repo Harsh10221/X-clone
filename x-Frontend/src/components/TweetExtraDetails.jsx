@@ -13,7 +13,7 @@ function TweetExtraDetails() {
   const fetchComments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/users/get-postcomments/${location?.postInfo?._id}`,
+        `https://x-clone-on81.onrender.com/get-postcomments/${location?.postInfo?._id}`,
         { withCredentials: true }
       );
       console.log("this is response", response);

@@ -78,7 +78,7 @@ to the og grok
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
-      let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+      let apiUrl = `https://x-clone-on81.onrender.com/get-latest-tweets`;
       // For subsequent requests, add the cursor to the URL
       if (nextCursor) {
         apiUrl += `?cursor=${nextCursor}`;

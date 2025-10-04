@@ -54,7 +54,7 @@ function HamburgerMenu() {
     // };
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/logout",
+        "https://x-clone-on81.onrender.com/logout",
         {},
         {
           withCredentials: true,

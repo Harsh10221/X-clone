@@ -112,7 +112,7 @@ function PostTweetCard() {
     // try {
     axios
       .post(
-        "http://localhost:8000/api/v1/users/create-post",
+        "https://x-clone-on81.onrender.com/create-post",
         //  {
         dataToUpload
         // author:userId

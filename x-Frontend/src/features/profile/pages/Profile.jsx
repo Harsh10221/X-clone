@@ -47,7 +47,7 @@ function Profile() {
   const handleFollowUser = () => {
     axios
       .post(
-        `http://localhost:8000/api/v1/users/follow-user`,
+        `https://x-clone-on81.onrender.com/follow-user`,
         { followerId: userInfo._id, followingId: anotherUserProfileData._id },
         {
           withCredentials: true,
@@ -62,7 +62,7 @@ function Profile() {
   const handleUnFollowUser = () => {
     axios
       .post(
-        `http://localhost:8000/api/v1/users/unfollow-user `,
+        `https://x-clone-on81.onrender.com/unfollow-user `,
         { followerId: userInfo._id, followingId: anotherUserProfileData._id },
         {
           withCredentials: true,

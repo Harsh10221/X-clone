@@ -46,7 +46,7 @@ function LoginStage1({
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/users/google-login",
+        "https://x-clone-on81.onrender.com/google-login",
         {
           token: idToken,
         }
