@@ -6,25 +6,30 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import axios from "axios";
 import MiniUserProfile from "../../../components/MiniUserProfile";
 
 function Search() {
   const navigate = useNavigate();
   const [searchTerm, setsearchTerm] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(null);
+  const [isError, setIsError] = useState(null);
   const [isLodading, setIsLodading] = useState(false);
 
   console.log("this is input ", results);
 
   useEffect(() => {
     const deDouncingFn = setTimeout(() => {
+      setResults(null);
+      setIsError(null);
       if (searchTerm) {
         axios
           .get(`http://localhost:8000/api/v1/users/find-user/${searchTerm}`)
-          .then((response) => setResults(response.data.results))
-          .catch((err) => console.log("❌ Error:", err.message));
+          .then((response) => setResults(response.data))
+          .catch(
+            (err) => setIsError(err.response.data)
+            //  console.log("❌ Error:", err.message)
+          );
       }
     }, 1000);
 
@@ -37,6 +42,7 @@ function Search() {
 
   const handleTheUserInputFromChild = (input) => {
     setsearchTerm(input);
+    console.log("THis is user input ser", input);
   };
 
   return (
@@ -53,12 +59,11 @@ function Search() {
       </div>
 
       <div className=" flex-1  w-full ">
-        {results.length > 0 ? (
-          results.map((item) => <MiniUserProfile item={item} />)
+        {results?.success ? (
+          results?.results?.map((item) => <MiniUserProfile item={item} />)
         ) : (
           <div className="w-full h-full flex items-start justify-center text-white ">
-            {" "}
-            No user found with this username{" "}
+            {isError?.message}
           </div>
         )}
       </div>

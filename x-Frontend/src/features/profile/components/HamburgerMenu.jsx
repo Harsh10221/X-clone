@@ -2,6 +2,7 @@ import {
   ArrowRightStartOnRectangleIcon,
   ArrowTopRightOnSquareIcon,
   BanknotesIcon,
+  BellAlertIcon,
   BoldIcon,
   BoltIcon,
   BookmarkIcon,
@@ -32,7 +33,11 @@ function HamburgerMenu() {
 
   const handlePofile = () => {
     // navigate("/profile");
-    navigate(`/profile/${userInfo._id}`);
+    isMobile ? (
+    navigate(`/profile/${userInfo._id}`) 
+  ) :
+  (navigate(`/home/profile/${userInfo._id}`) 
+)
     // navigate("/home/profile");
   };
 
@@ -65,6 +70,14 @@ function HamburgerMenu() {
     }
   };
 
+  const handleRedirectToNotification = () => {
+    navigate("/home/notifications")
+  }
+
+  const handleRedirectToHome = () => {
+    navigate("/home")
+  }
+
   const menuItems = [
     {
       Icon: Xsvg,
@@ -75,11 +88,19 @@ function HamburgerMenu() {
       name: "Home",
       Icon: HomeIcon,
       isValid: isMobile,
+      customFunction: handleRedirectToHome,
+
     },
     {
       name: "Profile",
       Icon: UserIcon,
       customFunction: handlePofile,
+    },
+    {
+      name: "Notification",
+      Icon: BellAlertIcon,
+      customFunction: handleRedirectToNotification,
+
     },
     {
       name: "Premium",
@@ -109,10 +130,7 @@ function HamburgerMenu() {
       name: "Ads",
       Icon: ArrowTopRightOnSquareIcon,
     },
-    {
-      name: "Jobs",
-      Icon: BriefcaseIcon,
-    },
+    
     {
       name: "Settings and privacy",
       Icon: Cog8ToothIcon,

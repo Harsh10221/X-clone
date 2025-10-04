@@ -19,25 +19,21 @@ function Stage1({
     watch,
     formState: { errors },
   } = useFormContext();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { isMobile } = useResponsive();
-  
-  
-  
 
-  const checkclick = () =>{
-    console.log(" i am clicked",handleAccountCreate)
-  }
+  const checkclick = () => {
+    console.log(" i am clicked", handleAccountCreate);
+  };
 
-  const handleNavigateMobile = () => navigate("/")
-
+  const handleNavigateMobile = () => navigate("/");
 
   return (
     <div className="gap-7  md:px-14 md:py-10 relative flex flex-col items-center justify-center">
       <svg
         // onClick={isMobile ? handleAccountCreate : navigate("/")}
-        onClick={isMobile ?  handleNavigateMobile  : handleAccountCreate}
+        onClick={isMobile ? handleNavigateMobile : handleAccountCreate}
         // onClick={checkclick}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -58,14 +54,14 @@ function Stage1({
         Create your account
       </div>
 
-      <div className=" md:flex md:gap-5 md:flex-col w-full" >
+      <div className=" md:flex md:gap-5 md:flex-col w-full">
         <input
-          {...register("name", { required: true })}
+          {...register("fullName", { required: true })}
           className=" text-white bg-transparent md:w-full p-2 border-[#4c4c4c] w-80 h-14 rounded-sm border "
           placeholder="Name"
           type="text"
         />
-        <div  >
+        <div>
           <input
             {...register("email", {
               required: true,
@@ -79,19 +75,13 @@ function Stage1({
             type="text"
           />
           <div className="text-red-500 p-2 h-5 ">
-            {
-              iserror
-                ? (() => {
-                    handleUserExistError();
-                    // console.log("This is error from stage 1",error)
-                    // console.log("i am runnde");
-                    return error;
-                  })()
-                : //  (error, handleUserExistError())
+            {iserror
+              ? (() => {
+                  handleUserExistError();
 
-                  errors.email?.message
-              // errors.email?.message ? errors.email?.message : error
-            }
+                  return error;
+                })()
+              : errors.email?.message}
           </div>
         </div>
 
@@ -108,7 +98,6 @@ function Stage1({
 
           <button
             type="submit"
-            // onClick={handlebtnClick}
             className={`md:mt-16 mt-24 rounded-3xl font-semibold  text-black  w-full h-12 ${
               eligible ? "bg-white" : "bg-[#585858]"
             } `}

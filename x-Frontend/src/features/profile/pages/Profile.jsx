@@ -3,6 +3,7 @@ import MobileNav from "../components/MobileNav";
 import Filters from "../components/Filters";
 import { ArrowLeftIcon, CalendarDaysIcon } from "@heroicons/react/20/solid";
 import default_profile from "../../../assets/default_profile.png";
+import default_banner from "../../../assets/default_banner.jpg";
 import HamburgerMenu from "../components/HamburgerMenu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -22,6 +23,8 @@ function Profile() {
   // console.log("This is userinfo", userInfo);
 
   const anotherUserProfileData = useLocation()?.state?.author;
+
+  // console.log("This is antoherprofile",anotherUserProfileData)
 
   const JoinedDate = new Date(
     anotherUserProfileData
@@ -50,10 +53,10 @@ function Profile() {
           withCredentials: true,
         }
       )
-      .then((response) => setIsFollowedByYou(true))
-      // .then((response) => setIsFollow(true))
-      // .then((response) => (response.status == 200 ? setIsFollow(true) : null))
-      .catch((error) => console.error(error));
+      .then((response) => {
+        anotherUserProfileData.followers++
+        setIsFollowedByYou(true)})
+     .catch((error) => console.error(error));
   };
 
   const handleUnFollowUser = () => {
@@ -65,7 +68,10 @@ function Profile() {
           withCredentials: true,
         }
       )
-      .then((response) => setIsFollowedByYou(false))
+      .then((response) => {
+                anotherUserProfileData.followers--
+
+        setIsFollowedByYou(false)})
       // .then((response) => setIsFollow(false))
       // .then((response) => (response.status == 200 ? setIsFollow(true) : null))
       .catch((error) => console.error(error));
@@ -109,6 +115,8 @@ function Profile() {
               anotherUserProfileData
                 ? anotherUserProfileData.bannerUrl
                 : userInfo?.bannerUrl
+                ? userInfo.bannerUrl
+                : default_banner
             }
             alt=""
             srcSet=""
@@ -214,7 +222,6 @@ function Profile() {
           />
         </div>
       </div>
-      
     </div>
   );
 }

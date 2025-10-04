@@ -147,11 +147,8 @@ function SignupPage({ handleAccountCreate }) {
   //Stage5
 
   const checkUsernamevalid = async () => {
-    // console.log("this is getvalues", methods.getValues().username);
-    // console.log("this is getvalues only", methods.getValues());
-
     try {
-      console.log("this is from sigup page",methods.getValues())
+      console.log("this is from sigup page", methods.getValues());
       const response = await axios.post(
         "http://localhost:8000/api/v1/users/check-username",
         {
@@ -173,6 +170,7 @@ function SignupPage({ handleAccountCreate }) {
 
     if (stage == 1) {
       handlebtnClick();
+      console.log(data);
     }
 
     // console.log("THis is data ", data);
@@ -221,8 +219,6 @@ function SignupPage({ handleAccountCreate }) {
       }
     }
 
-    
-
     try {
       const registerResponse = await axios.post(
         "http://localhost:8000/api/v1/users/register",
@@ -248,7 +244,7 @@ function SignupPage({ handleAccountCreate }) {
 
   return (
     <FormProvider {...methods}>
-        <form
+      <form
         className="md:h-4/5 md:w-2/5 md:bg-black md:rounded-xl h-full w-full"
         onSubmit={methods.handleSubmit(onFinalSubmit)}
       >
@@ -262,12 +258,8 @@ function SignupPage({ handleAccountCreate }) {
               handleDataFromChild={handleDataFromChild}
               handleUserExistError={handleUserExistError}
               handlebtnClick={handlebtnClick}
-              // watch={watch}
               iserror={iserror}
               handleNextStage={handleNextStage}
-              // initialData={getValues()}
-              // register={register}
-              // errors={errors}
               setStage={setStage}
               fullDetails={fullDetails}
               setFullDetails={setFullDetails}

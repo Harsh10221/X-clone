@@ -20,7 +20,7 @@ function Notification() {
   };
 
   return (
-    <div className="w-full  h-full">
+    <div className="w-full  h-full md:w-2/5 ">
       <div className="flex h-14 items-center gap-3 pl-4 border-b border-[#373737]  ">
         <ArrowLeftIcon
           onClick={handleBackToHome}

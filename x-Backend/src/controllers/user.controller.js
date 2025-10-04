@@ -62,12 +62,12 @@ const updateProfile = asyncHandler(async (req, res) => {
 	};
 
 	if (avatar?.length > 0) {
-		console.log("inside avatar lentgh ")
+		console.log("inside avatar lentgh ");
 		const cloudinaryAvatarResponse = await uploadOnCloudinary(avatar[0]?.path);
 		newDataToUpdate.avatarUrl = cloudinaryAvatarResponse.url;
 	}
 	if (banner?.length > 0) {
-		console.log("inside banner lentgh ")
+		console.log("inside banner lentgh ");
 		const cloudinaryBannerResponse = await uploadOnCloudinary(banner[0]?.path);
 		newDataToUpdate.bannerUrl = cloudinaryBannerResponse.url;
 	}
@@ -90,7 +90,7 @@ const checkUserName = asyncHandler(async (req, res) => {
 
 	const result = await User.findOne({ userName });
 
-	if (result.userName == userName) {
+	if (result?.userName == userName) {
 		return res.status(400).json({
 			message: "Username is already taken",
 		});
@@ -109,10 +109,9 @@ const registerUser = asyncHandler(async (req, res) => {
 	const { userName, fullName, password, email, bio, year, month, day } =
 		req.body;
 
-	const dateOfBirth = new Date(year, month - 1, day);
+	// console.log("This is reqbody from register function ",req.body)
 
-	// console.log("This is date of birth", dateOfBirth);
-	// console.log("This is This is uername", userName);
+	const dateOfBirth = new Date(year, month - 1, day);
 
 	if (!userName || !password || !email) {
 		const error = new Error("All fields are required");
@@ -129,8 +128,6 @@ const registerUser = asyncHandler(async (req, res) => {
 		],
 	});
 
-	// console.log("this is user",result);
-
 	if (result) {
 		const error = new Error();
 		error.message = "User already exist";
@@ -139,27 +136,19 @@ const registerUser = asyncHandler(async (req, res) => {
 	}
 
 	const avatarPath = req.files.avatar[0].path;
-	// const bannerPath = req.files.banner[0].path
 
 	const avatarUrl = await uploadOnCloudinary(avatarPath);
-	// const bannerUrl = await uploadOnCloudinary(bannerPath)
-
-	// console.log(data)
 
 	const user = await User.create({
 		userName,
 		password,
 		email,
 		fullName,
-		// fullName,
 		dob: dateOfBirth,
 		avatarUrl: avatarUrl.url,
-		// bannerUrl: bannerUrl.url,
 
 		bio,
 	});
-
-	// console.log("This is user", user);
 
 	return res.json({
 		statuCode: 201,
@@ -425,10 +414,25 @@ const searchForUser = asyncHandler(async (req, res) => {
 		userName: { $regex: searchQuery },
 	}).select("-refreshToken -password -email -updatedAt -__v ");
 
-	return res.status(200).json({
-		message: "ok",
-		results,
-	});
+	if (results.length > 0) {
+		return res.status(200).json({
+			success: true,
+
+			message: "User found with this username",
+			results,
+		});
+	} else {
+		return res.status(404).json({
+			success: false,
+			message: "No user found with this username",
+			results,
+		});
+	}
+
+	// return res.status(200).json({
+	// 	message: "ok",
+	// 	results,
+	// });
 });
 
 const googleLogin = asyncHandler(async (req, res) => {

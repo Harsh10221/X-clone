@@ -16,7 +16,7 @@ function TweetExtraDetails() {
         `http://localhost:8000/api/v1/users/get-postcomments/${location?.postInfo?._id}`,
         { withCredentials: true }
       );
-      // console.log("this is response", response);
+      console.log("this is response", response);
       return response?.data?.result;
     } catch (error) {
       console.log("There was a error while featching", error);
@@ -32,8 +32,8 @@ function TweetExtraDetails() {
   });
 
   return (
-    <div className=" w-full h-full ">
-      {/* <div className="w-full h-full p "> */}
+    <div className="md:w-2/5 w-full h-full ">
+   
       <div className=" h-12 w-full border-b border-[#313131] flex gap-4 items-center ">
         <ArrowLeftIcon
           // onClick={() => navigate(-1)}

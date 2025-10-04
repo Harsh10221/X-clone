@@ -3,6 +3,8 @@ import default_profile from "../assets/default_profile.png";
 import GrokSvg from "../features/profile/components/GrokSvg";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime.js";
+import { useResponsive } from "../features/auth/hooks/useResponsive.js";
+
 import {
   ArrowTopRightOnSquareIcon,
   ArrowUpTrayIcon,
@@ -21,13 +23,17 @@ dayjs.extend(relativeTime);
 
 function TweetCard({ tweetData }) {
   // console.log("this is from teweetdata", tweetData);
+  const { isMobile } = useResponsive();
   const [isfullPostVisible, setIsFullPostVisible] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { selectedImage, openPreview, closePreview } = useImagePreview();
   // console.log("THis is the selectedImage", selectedImage);
 
-  const authorProfileUrl = `/profile/${tweetData?.author?._id}`;
-  const authorTweetDetails = `/user/tweet`;
+  const authorProfileUrl = isMobile
+    ? `/profile/${tweetData?.author?._id}`
+    : `/home/profile/${tweetData?.author?._id} `
+
+  const authorTweetDetails = isMobile ? `/user/tweet` : `/home/user/tweet`
 
   const postRef = useRef(null);
 
@@ -229,9 +235,8 @@ function TweetCard({ tweetData }) {
                   ))}
             </div>
           )}
-
         </Link>
-          <AdititonalTweetCardFeatures tweetData={tweetData} />
+        <AdititonalTweetCardFeatures tweetData={tweetData} />
       </div>
     </div>
   );
