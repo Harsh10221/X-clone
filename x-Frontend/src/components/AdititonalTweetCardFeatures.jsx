@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function AdititonalTweetCardFeatures({ tweetData }) {
-  //   console.log("this is data", tweetData);
+    // console.log("this is data", tweetData);
 
   const [isLiked, setisLiked] = useState(false);
   const commentUnderPostUrl = `/post/comment/${tweetData?._id}`;
@@ -31,7 +31,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
     e.stopPropagation();
     axios
       .post(
-        `https://x-clone-on81.onrender.com/like-user`,
+        `http://localhost:8000/api/v1/users/like-user`,
         { authorId: tweetData.author._id, postId: tweetData._id },
         { withCredentials: true }
       )
@@ -44,7 +44,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
 
   const handleUnLikePost = () => {
     axios
-      .delete(`https://x-clone-on81.onrender.com/unlike-user`, {
+      .delete(`http://localhost:8000/api/v1/users/unlike-user`, {
         data: { postId: tweetData._id },
         // { authorId: tweetData.author._id, postId: _id },
         withCredentials: true,
@@ -54,7 +54,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
   };
 
   return (
-    <div className="flex text-[#777777] justify-between mt-4  ">
+    <div className="flex text-[#777777] items-center justify-between mt-4  ">
       <Link
         className=""
         to={commentUnderPostUrl}
@@ -79,7 +79,8 @@ function AdititonalTweetCardFeatures({ tweetData }) {
         </svg>
       </div>
 
-      <div>
+      <div className="flex gap-1 items-center justify-center ">
+      <div className="pb-1  " > {tweetData?.likeCount} </div>  
         {isLiked ? (
           <HeartIcon
             onClick={handleUnLikePost}

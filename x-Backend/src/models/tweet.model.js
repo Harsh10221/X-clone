@@ -27,7 +27,11 @@ const tweetSchema = new Schema({
         },
         urls: {
             type: Array,
+        },
+        pubId:{
+            type:Array
         }
+
     },
 
     likeCount: {

@@ -30,11 +30,20 @@ import axios from "axios";
 
 function PostTweetCard() {
   // const
+  const location = useLocation();
+  const imgUrl = location?.state?.postData?.media?.urls || [];
+  const isThisPostEdit = location?.state?.postData ? true : false;
+
   const [isImgVisible, setisImgVisible] = useState([]);
   const imgRef = useRef(null);
   const imgContRef = useRef(null);
   const userId = useSelector((state) => state.user.userInfo._id);
   const [isThisIsComment, setIsThisIsComment] = useState(false);
+  const navigate = useNavigate();
+  const [imgUrlFromNavigation, setImgUrlFromNavigation] = useState(imgUrl);
+
+  // console.log("This is location ", location);
+  console.log("This is location ", isImgVisible);
 
   const { postId } = useParams();
   const authorInfo = useLocation()?.state;
@@ -51,6 +60,11 @@ function PostTweetCard() {
     // }
   }, [postId]);
 
+  useEffect(() => {
+    console.log("THis is urls", imgUrlFromNavigation);
+    setisImgVisible(imgUrlFromNavigation);
+  }, [imgUrlFromNavigation]);
+
   // console.log("this is post", useLocation()?.state);
 
   const {
@@ -58,20 +72,23 @@ function PostTweetCard() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      userInput: location?.state?.postData?.text,
+      // file: location?.state?.postData?.urls,
+    },
+  });
+
   const {
     ref: formFileRef,
     onChange: onFormChange,
     ...rest
   } = register("file");
 
-  const navigate = useNavigate();
-
-  // const checkinging = watch("userInput")
-  // console.log(watch("userInput"))
-
   const onSubmit = async (data) => {
     console.log("this is data.image", data);
+
+    // console.log("Is this editied post",location?.state?.postData ? true : false)
 
     let mediaType;
     const dataToUpload = new FormData();
@@ -80,46 +97,72 @@ function PostTweetCard() {
       data.file[0]?.type == "image/png" ||
       data.file[0]?.type == "image/jpeg"
     ) {
-      console.log("This is image", data.file[0].type);
       mediaType = "image";
-
       dataToUpload.append("type", mediaType);
-      
+
       for (const file of data.file) {
         dataToUpload.append("image", file);
       }
-    }
-
-    if (data.file[0]?.type == "video/mp4") {
-      // console.log("This is video")
+    } else if (data.file[0]?.type == "video/mp4") {
       mediaType = "video";
       dataToUpload.append("type", mediaType);
       dataToUpload.append("video", data.file[0]);
     }
 
-    console.log("This is the mdeiatype", mediaType);
-
-    dataToUpload.append("userInput", data.userInput);
-    dataToUpload.append("author", userId);
     if (isThisIsComment) {
       dataToUpload.append("parentTweetId", postId);
     }
 
     if (data.file.length > 4) {
       setisImgVisible([]);
-      return console.log("plz select only 4 images ");
+      return console.log("plz select only 4 images");
     }
+
+    // for (let pair of dataToUpload.entries()) {
+    //   console.log(pair[0] + ": ", pair[1]);
+    // }
+
+    // console.log("This is the mdeiatype", mediaType);
+
+    if (isThisPostEdit) {
+      dataToUpload.append("postId", location?.state?.postData?._id);
+      dataToUpload.append("userInput", data.userInput);
+      dataToUpload.append(
+        "prevImg",
+        isImgVisible.length > 0 ? imgUrlFromNavigation : ""
+      );
+    } else {
+      dataToUpload.append("userInput", data.userInput);
+      dataToUpload.append("author", userId);
+    }
+
     // try {
-    axios
-      .post(
-        "https://x-clone-on81.onrender.com/create-post",
-        //  {
-        dataToUpload
-        // author:userId
-        // }
-      )
-      .then(navigate("/home"))
-      .catch((error) => console.log(error));
+
+    if (location?.state?.postData) {
+      // isImgVisible
+
+      axios
+        .patch(
+          "http://localhost:8000/api/v1/users/edit-post",
+
+          dataToUpload,
+
+          { withCredentials: true }
+        )
+        .then(navigate("/home"))
+        .catch((error) => console.log(error));
+    } else {
+      axios
+        .post(
+          "http://localhost:8000/api/v1/users/create-post",
+          //  {
+          dataToUpload
+          // author:userId
+          // }
+        )
+        .then(navigate("/home"))
+        .catch((error) => console.log(error));
+    }
 
     // () => navigate("/Home");
     // } catch (error) {
@@ -129,17 +172,6 @@ function PostTweetCard() {
     // console.log("this i respones", response.data);
   };
 
-  // };
-
-  // const imageFiles = watch("image");
-  // console.log("this is imageFiles",watch("image"))
-
-  // useEffect(()=>{
-  //   if (imageFiles && imageFiles.length > 0) {
-  //     console.log("File selected",imageFiles)
-  //   }
-  // },[imageFiles])
-
   const handleSelectImage = () => {
     imgRef.current.click();
 
@@ -147,33 +179,22 @@ function PostTweetCard() {
   };
 
   const handleFileChange = (e) => {
-    // console.log("this is event", e.target.files);
-
     onFormChange(e);
-    // const file =
-
-    // console.log("this is file", Array.from(e.target.files));
 
     setisImgVisible(Array.from(e.target.files));
-    // setisImgVisible(URL.createObjectURL(file));
-    // the url is to preview the image that was selected
   };
 
   const handleRemoveImages = (e) => {
-    // imgContRef.style.transform = "translateX(-100px)";
-    // console.log("This is event",e.target.closest(".parent-box"))
-    // console.log("This is ref ",isImgVisible)
     setisImgVisible([]);
+    setImgUrlFromNavigation([]);
   };
-  // console.log("This is isimgvisible", isImgVisible);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full h-full p-4 ">
         <div className="flex justify-between   items-center ">
           <ArrowLeftIcon
-          
-            onClick={() => isThisIsComment ? navigate(-1) : navigate("/home")}
+            onClick={() => (isThisIsComment ? navigate(-1) : navigate("/home"))}
             className="text-white w-5 h-5 items-center"
           />
           <div className="font-semibold flex gap-6 ">
@@ -221,11 +242,7 @@ function PostTweetCard() {
                 id=""
               ></textarea>
 
-              {/* ${
-                    isImgVisible ? "block" : "hidden"
-                  } */}
-
-              {isImgVisible.length > 0 && (
+              {isImgVisible?.length > 0 && (
                 <div className=" w-full   h-48 relative flex   p-5   rounded-xl overflow-hidden  ">
                   <div
                     ref={imgContRef}
@@ -240,15 +257,22 @@ function PostTweetCard() {
                             : "w-auto h-auto"
                         }  `}
                       >
-                        <img
-                          className={`w-full h-full   object-contain rounded-xl `}
-                          src={URL.createObjectURL(img)}
-                          alt=""
-                          srcSet=""
-                        />
+                        {imgUrlFromNavigation.length > 0 ? (
+                          <img
+                            className={`w-full h-full object-contain rounded-xl `}
+                            src={img}
+                            alt=""
+                            srcSet=""
+                          />
+                        ) : (
+                          <img
+                            className={`w-full h-full object-contain rounded-xl `}
+                            src={URL.createObjectURL(img)}
+                            alt=""
+                            srcSet=""
+                          />
+                        )}
                       </div>
-                      // <div>hello</div>
-                      // <div className="bg-gray-500 w-full p-5 h-full" >1</div>
                     ))}
                   </div>
 
@@ -256,20 +280,8 @@ function PostTweetCard() {
                     onClick={handleRemoveImages}
                     className="text-white w-6 h-6 absolute right-0 top-0 "
                   />
-
-                  {/* <ArrowLeftCircleIcon onClick={handleSwipeLeft} className="text-white w-7 h-7 absolute  top-1/2 " />
-          <ArrowRightCircleIcon className="text-white w-7 h-7 absolute right-0 top-1/2 " /> */}
                 </div>
               )}
-
-              {/* <img
-                className={`w-full rounded-xl ${
-                  isImgVisible ? "block" : "hidden"
-                }`}
-                src={isImgVisible}
-                alt=""
-                srcSet=""
-              /> */}
 
               <input
                 {...rest}
@@ -299,7 +311,7 @@ function PostTweetCard() {
             className=" w-5 h-5  "
           />
           <GifIcon className=" w-5 h-5  " />
-          <GrokSvg width="w-5" />
+          <GrokSvg width="w-5  " />
           <ListBulletIcon className=" w-5 h-5  " />
           <CalendarDaysIcon className=" w-5 h-5  " />
           <MapPinIcon className=" w-5 h-5  " />

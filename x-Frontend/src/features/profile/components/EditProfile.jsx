@@ -67,7 +67,7 @@ function EditProfile() {
 
     try {
       const response = await axios.post(
-        "https://x-clone-on81.onrender.com/update-profile",
+        "http://localhost:8000/api/v1/users/update-profile",
         dataToUpload,
         { withCredentials: true }
       );

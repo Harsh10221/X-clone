@@ -26,7 +26,7 @@ function LoginPage({ handleAccountLogin }) {
 
   const checkUserExist = async (emailorUsername) => {
     const response = await axios.get(
-      "https://x-clone-on81.onrender.com/check-userexist",
+      "http://localhost:8000/api/v1/users/check-userexist",
       {
         params: { emailorUsername },
       }
@@ -45,7 +45,7 @@ function LoginPage({ handleAccountLogin }) {
   const checkUserPassword = async (password, emailorUsername) => {
     try {
       const response = await axios.post(
-        "https://x-clone-on81.onrender.com/check-password",
+        "http://localhost:8000/api/v1/users/check-password",
         {
           password,
           emailorUsername,

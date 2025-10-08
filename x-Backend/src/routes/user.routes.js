@@ -18,6 +18,7 @@ import verifyJwt from "../middlewares/auth.middleware.js";
 import {
 	createTweet,
 	deleteTweet,
+	editTweet,
 	getfeedTweet,
 	getPostComments,
 	getUserTweet,
@@ -78,8 +79,18 @@ router.route("/create-post").post(
 	createTweet
 );
 
+router.route("/edit-post").patch(
+	upload.fields([
+		{ name: "image", maxCount: 4 },
+		{ name: "video", maxCount: 1 },
+	]),
+	editTweet
+);
+
+
+
 router.route("/get-latest-tweets").get(verifyJwt, getfeedTweet);
-router.route("/delete-tweet").post(deleteTweet);
+router.route("/delete-tweet").delete(deleteTweet);
 
 router.route("/follow-user").post(verifyJwt, followUser);
 router.route("/unfollow-user").post(verifyJwt, unFollowUser);

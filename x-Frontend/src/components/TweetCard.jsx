@@ -18,34 +18,74 @@ import { useImagePreview } from "../hooks/previewImage";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import AdititonalTweetCardFeatures from "./AdititonalTweetCardFeatures";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 dayjs.extend(relativeTime);
 
 function TweetCard({ tweetData }) {
   // console.log("this is from teweetdata", tweetData);
+  const navigate = useNavigate();
   const { isMobile } = useResponsive();
   const [isfullPostVisible, setIsFullPostVisible] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isMoreOptionEnabled, setisMoreOptionEnabled] = useState(false);
   const { selectedImage, openPreview, closePreview } = useImagePreview();
   // console.log("THis is the selectedImage", selectedImage);
+  const queryClient = useQueryClient();
+
+  const loggedInUser = useSelector((state) => state?.user?.userInfo);
+  // console.log("This si loggedin user", loggedInUser);
 
   const authorProfileUrl = isMobile
     ? `/profile/${tweetData?.author?._id}`
-    : `/home/profile/${tweetData?.author?._id} `
+    : `/home/profile/${tweetData?.author?._id} `;
 
-  const authorTweetDetails = isMobile ? `/user/tweet` : `/home/user/tweet`
+  const authorTweetDetails = isMobile ? `/user/tweet` : `/home/user/tweet`;
 
   const postRef = useRef(null);
 
   const handlePostHeight = () => setIsFullPostVisible((prev) => !prev);
   const handleImageLoad = () => setIsImageLoaded(true);
+
   const handleCenterDivClick = (e) => {
     e.stopPropagation();
     e.preventDefault();
   };
-  // const handleRedirectPostInfo = () => {
 
-  // }
+  const handlePostOptions = (e) => {
+    // console.log("you clicked on me ", e);
+    // e.stopPropagation()
+    e.preventDefault();
+    setisMoreOptionEnabled((prev) => !prev);
+  };
+
+  const handleEditPost = (e) => {
+    e.preventDefault();
+    navigate("/post", { state: { postData: tweetData } });
+  };
+
+  // const handleDeletePost = (e) => {
+  // e.preventDefault();
+
+  // const response = await axios.delete(
+  //   "http://localhost:8000/api/v1/users/delete-tweet",
+  //   { data: { postId: tweetData?._id }, withCredentials: true }
+  // )
+
+  const deletemutation = useMutation({
+    mutationFn: () =>
+      axios.delete("http://localhost:8000/api/v1/users/delete-tweet", {
+        data: { postId: tweetData?._id },
+        withCredentials: true,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tweets"] });
+    },
+  });
+
+  // console.log("THis is state of the ",deletemutation.isPending)
 
   useEffect(() => {
     if (postRef?.current?.clientHeight > 240) {
@@ -101,10 +141,18 @@ function TweetCard({ tweetData }) {
         </div>
       ) : null}
 
+      {
+        // deletemutation.isPending ?
+        true ? (
+          <div className=" absolute z-10 bg-red-500"> </div>
+        ) : null
+      }
+
       {/* <div className='bg-red-950 w-14 max-h-[83vh] ' > */}
 
       <Link
         to={authorProfileUrl}
+        stoppropagation="true"
         state={{
           author: tweetData?.author,
           postInfo: tweetData,
@@ -156,10 +204,34 @@ function TweetCard({ tweetData }) {
                 {" "}
                 <GrokSvg color={"#777777"} width="w-5" />{" "}
               </span>
-              <span>
+              <div className="relative">
                 {" "}
-                <EllipsisHorizontalIcon className=" w-6 h-6" />{" "}
-              </span>
+                <EllipsisHorizontalIcon
+                  onClick={handlePostOptions}
+                  // onClick={() => deletemutation.mutate()}
+                  className="cursor-pointer w-6 h-6  "
+                />
+                {loggedInUser?._id == tweetData?.author?._id ? (
+                  isMoreOptionEnabled ? (
+                    <div className="border backdrop-blur-2xl flex flex-col h-14  w-24 right-0 z-10 absolute rounded-xl ">
+                      <div
+                        onClick={handleEditPost}
+                        className=" text-white w-full h-full text-center border-b mt-1 "
+                      >
+                        Edit
+                      </div>
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault(), deletemutation.mutate();
+                        }}
+                        className=" text-white w-full h-full text-center mt-1 "
+                      >
+                        Delete
+                      </div>
+                    </div>
+                  ) : null
+                ) : null}
+              </div>
             </div>
           </div>
 

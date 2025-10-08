@@ -24,7 +24,7 @@ function Search() {
       setIsError(null);
       if (searchTerm) {
         axios
-          .get(`https://x-clone-on81.onrender.com/find-user/${searchTerm}`)
+          .get(`http://localhost:8000/api/v1/users/find-user/${searchTerm}`)
           .then((response) => setResults(response.data))
           .catch(
             (err) => setIsError(err.response.data)

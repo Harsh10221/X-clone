@@ -41,7 +41,8 @@ import { postNotification } from "../features/Slices/notificationSlice";
 
 //   return null;
 // }
-const SOCKET_URL = "ws://localhost:8000";
+// const SOCKET_URL = "ws://localhost:8000";
+const SOCKET_URL = "wss://x-clone-on81.onrender.com";
 
 export const WebSocketManager = () => {
   // const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
