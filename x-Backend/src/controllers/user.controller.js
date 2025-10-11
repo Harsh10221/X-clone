@@ -10,6 +10,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import sendCodeAndCheck from "../utils/otpCheck.js";
 import { providers } from "web3";
 import ApiResponse from "../utils/ApiResponse.js";
+import { Tweet } from "../models/tweet.model.js";
+// import { use } from "react";
 // cookieParser
 
 const checkUserEmail = asyncHandler(async (req, res) => {
@@ -48,7 +50,20 @@ const updateProfile = asyncHandler(async (req, res) => {
 		email,
 		location,
 		website,
+		current_password,
+		new_password,
+		confirm_new_password,
 	} = req.body;
+
+	// console.log("THis is req.body",req.body)
+
+	// console.log("THis is username",userName)
+	// console.log("THis is fullname",fullName)
+	// console.log("THis is email",email)
+
+	if (!userName || !fullName || !email) {
+		throw new ApiError(403, "Username,name,email cannot be empty");
+	}
 
 	const { avatar, banner } = req.files;
 
@@ -61,6 +76,8 @@ const updateProfile = asyncHandler(async (req, res) => {
 		website,
 	};
 
+	let user = await User.findById(req.user._id);
+
 	if (avatar?.length > 0) {
 		console.log("inside avatar lentgh ");
 		const cloudinaryAvatarResponse = await uploadOnCloudinary(avatar[0]?.path);
@@ -71,18 +88,96 @@ const updateProfile = asyncHandler(async (req, res) => {
 		const cloudinaryBannerResponse = await uploadOnCloudinary(banner[0]?.path);
 		newDataToUpdate.bannerUrl = cloudinaryBannerResponse.url;
 	}
-
-	const result = await User.findByIdAndUpdate(
-		req.user._id,
-		{ $set: newDataToUpdate },
-		{
-			new: true,
+	if (current_password) {
+		if (new_password !== confirm_new_password) {
+			throw new ApiError(403, "New password and Confirm password didn't match");
 		}
-	);
-	return res.json({
-		message: "Profile update successfully",
-		updatedData: result,
-	});
+
+		const matched = await user.isPasswordCorrect(current_password);
+
+		// console.log("This is matched status", matched);
+		if (matched) {
+			const twentyFourHoursInMin = 24 * 60 * 60 * 1000;
+			const passwordLastUpdated = user.passwordLastUpdated.getTime();
+
+			const timeToChangePass = new Date(
+				twentyFourHoursInMin + passwordLastUpdated
+			);
+			const currentTime = new Date();
+
+			// console.log("This is timetochagne", timeToChangePass);
+			// console.log("This is currenttime", currentTime);
+			// console.log("This is passwrodlastupdated", passwordLastUpdated);
+
+			if (currentTime > timeToChangePass) {
+				user.password = new_password;
+				console.log("This is status ", currentTime < timeToChangePass);
+			} else {
+				// throw new ApiError(
+				// 	400,
+				// 	`You can change password after ${timeToChangePass}`
+				// );
+
+				return res.status(400).json({
+					error: `You can change password after ${timeToChangePass}`,
+				});
+			}
+
+			// console.log("This password time ", passwordLastUpdated);
+		} else {
+			return res.status(400).json({
+				error: `Current password is incorrect`,
+			});
+
+			// throw new ApiError(400, "Current password is incorrect");
+		}
+	}
+
+	{
+		// const result = await User.findByIdAndUpdate(
+		// 	req.user._id,
+		// 	{ $set: newDataToUpdate },
+		// 	{
+		// 		new: true,
+		// 	}
+		// );
+		// console.log("This is user",req.user)
+	}
+	if (user.userName !== userName) {
+		// console.log("not same ");
+
+		const lastupdated = user.userNameLastUpdated.getTime();
+		const twentyFourHoursInMin = 24 * 60 * 60 * 1000;
+
+		const canChangeAgainAt = new Date(lastupdated + twentyFourHoursInMin);
+		const currtime = new Date();
+
+		if (currtime > canChangeAgainAt) {
+			return res.status(400).json({
+				error: `You can chage your username again at ${canChangeAgainAt.toLocaleString()}`,
+			});
+			// throw new ApiError(400, "User name can only change once a day ");
+		}
+
+		// console.log(lastupdated.toLocaleDateString);
+	}
+
+	user.userName = userName;
+
+	user.fullName = fullName;
+	user.bio = bio;
+	user.email = email;
+	user.location = location;
+	user.website = website;
+
+	const updatedUser = await user.save();
+
+	console.log("This is updateddata", updatedUser);
+
+	// return res.json({
+	// 	message: "Profile update successfully",
+	// 	// updatedData: updatedUser,
+	// });
 });
 
 const checkUserName = asyncHandler(async (req, res) => {
@@ -400,7 +495,7 @@ const generateOtp = asyncHandler(async (req, res) => {
 
 const searchForUser = asyncHandler(async (req, res) => {
 	const searchQuery = req.params.query;
-	// console.log("thi is searchQuery",searchQuery)
+	console.log("thi is searchQuery", searchQuery);
 
 	if (!searchQuery) {
 		throw new ApiError(400, "Search query is empty");
@@ -414,6 +509,8 @@ const searchForUser = asyncHandler(async (req, res) => {
 		userName: { $regex: searchQuery },
 	}).select("-refreshToken -password -email -updatedAt -__v ");
 
+	// console.log("this is result ",results)
+
 	if (results.length > 0) {
 		return res.status(200).json({
 			success: true,
@@ -426,6 +523,44 @@ const searchForUser = asyncHandler(async (req, res) => {
 			success: false,
 			message: "No user found with this username",
 			results,
+		});
+	}
+
+	// return res.status(200).json({
+	// 	message: "ok",
+	// 	results,
+	// });
+});
+
+const searchForUserWithUserId = asyncHandler(async (req, res) => {
+	const postId = req.params.query;
+	// console.log("thi is searchQuery",userId)
+
+	if (!postId) {
+		throw new ApiError(400, "postId is empty");
+	}
+
+	// const searchRegex = new RegExp(searchQuery, "i");
+
+	// console.log("thi is searchregex",searchRegex)
+
+	const result = await Tweet.findById(postId).select(
+		"-refreshToken -password -email -updatedAt -__v "
+	);
+
+	// console.log("this is result ",result)
+
+	if (result) {
+		return res.status(200).json({
+			success: true,
+			message: "No post found with this postId",
+			result,
+		});
+	} else {
+		return res.status(404).json({
+			success: false,
+			message: "No post found with this postId",
+			result,
 		});
 	}
 
@@ -473,4 +608,5 @@ export {
 	searchForUser,
 	googleLogin,
 	updateProfile,
+	searchForUserWithUserId,
 };

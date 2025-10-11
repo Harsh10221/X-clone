@@ -12,7 +12,7 @@ function TabBar({}) {
 
   const handleHamburgerMenu = () => setisHamburgerMenuvisible((prev) => !prev);
   const { isMobile } = useResponsive();
-  const userAvatar = useSelector((state)=>state.user.userInfo.avatarUrl)
+  const userAvatar = useSelector((state)=>state?.user?.userInfo?.avatarUrl)
 
   return (
     <div className="w-full  relative h-28  md:h-10 border-b border-[#414141]  ">

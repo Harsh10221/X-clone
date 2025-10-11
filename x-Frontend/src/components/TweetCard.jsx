@@ -42,7 +42,7 @@ function TweetCard({ tweetData }) {
     ? `/profile/${tweetData?.author?._id}`
     : `/home/profile/${tweetData?.author?._id} `;
 
-  const authorTweetDetails = isMobile ? `/user/tweet` : `/home/user/tweet`;
+  const authorTweetDetails = isMobile ? `/user/tweet/${tweetData?._id}` : `/home/user/tweet/${tweetData?._id}`;
 
   const postRef = useRef(null);
 
@@ -66,14 +66,6 @@ function TweetCard({ tweetData }) {
     navigate("/post", { state: { postData: tweetData } });
   };
 
-  // const handleDeletePost = (e) => {
-  // e.preventDefault();
-
-  // const response = await axios.delete(
-  //   "http://localhost:8000/api/v1/users/delete-tweet",
-  //   { data: { postId: tweetData?._id }, withCredentials: true }
-  // )
-
   const deletemutation = useMutation({
     mutationFn: () =>
       axios.delete("http://localhost:8000/api/v1/users/delete-tweet", {
@@ -84,8 +76,6 @@ function TweetCard({ tweetData }) {
       queryClient.invalidateQueries({ queryKey: ["tweets"] });
     },
   });
-
-  // console.log("THis is state of the ",deletemutation.isPending)
 
   useEffect(() => {
     if (postRef?.current?.clientHeight > 240) {
@@ -143,9 +133,7 @@ function TweetCard({ tweetData }) {
 
       {
         // deletemutation.isPending ?
-        true ? (
-          <div className=" absolute z-10 bg-red-500"> </div>
-        ) : null
+        true ? <div className=" absolute z-10 bg-red-500"> </div> : null
       }
 
       {/* <div className='bg-red-950 w-14 max-h-[83vh] ' > */}
@@ -241,11 +229,6 @@ function TweetCard({ tweetData }) {
               className={` overflow-hidden text-white
                ${isfullPostVisible ? "h-60" : "h-auto"}
                `}
-              //  ${postRef?.current?.clientHeight > 240 ? "h-60" : "h-auto"  }
-              //  `}
-              // className={`text-white px-1 ${
-              //   isfullPostVisible ? "h-auto" : "h-60"
-              // }   overflow-hidden  `}
             >
               {tweetData?.text}
             </div>

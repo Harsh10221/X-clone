@@ -12,6 +12,9 @@ const userSchema = new Schema(
 			trim: true,
 			index: true,
 		},
+		userNameLastUpdated: {
+			type: Date,
+		},
 		fullName: {
 			type: String,
 			// required: true,
@@ -21,6 +24,9 @@ const userSchema = new Schema(
 			type: String,
 			required: true,
 			trim: true,
+		},
+		passwordLastUpdated: {
+			type: Date,
 		},
 
 		// password: {
@@ -98,6 +104,12 @@ userSchema.pre("save", async function (next) {
 	// when the doc update this will run normal
 	if (this.isModified("password")) {
 		this.password = await bcrypt.hash(this.password, 10);
+		this.passwordLastUpdated = new Date();
+
+		console.log(
+			"I am from middleware and this is updated time",
+			this.passwordLastUpdated
+		);
 	}
 	next();
 });
@@ -129,5 +141,13 @@ userSchema.methods.generateRefreshToken = function () {
 		}
 	);
 };
+
+userSchema.pre("save", async function (next) {
+	if (this.isModified("userName")) {
+		console.log("i am runned from middleware");
+		this.userNameLastUpdated = new Date();
+	}
+	next();
+});
 
 export const User = mongoose.model("User", userSchema);

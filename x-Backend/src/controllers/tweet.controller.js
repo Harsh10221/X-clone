@@ -6,7 +6,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { error } from "console";
 import { User } from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
-import mongoose, { Model, set } from "mongoose";
+import mongoose, { Model, set, Types } from "mongoose";
 import { lookup } from "dns";
 import { FollowerModel } from "../models/follow.model.js";
 import { clients } from "../app.js";
@@ -108,9 +108,8 @@ const editTweet = asyncHandler(async (req, res) => {
 
 	console.log("This is req.body", req.body);
 	console.log("This is req.files", req.files);
-	
-	console.log("This is previous image", prevImg);
 
+	console.log("This is previous image", prevImg);
 
 	if (!postId || !userInput) {
 		throw new ApiError(400, "All fields are required");
@@ -143,7 +142,7 @@ const editTweet = asyncHandler(async (req, res) => {
 		});
 	}
 
-	if (!prevImg && !type ) {
+	if (!prevImg && !type) {
 		console.log("i am from when No previous image");
 
 		const resultWhenNoImage = await Tweet.findByIdAndUpdate(
@@ -173,12 +172,11 @@ const editTweet = asyncHandler(async (req, res) => {
 		const localFilePath = req.files[type]?.map((item) => item.path);
 		const uploadPromise = localFilePath?.map((path) =>
 			uploadOnCloudinary(path)
-		
 		);
 
 		const cloudinaryResponse = await Promise.all(uploadPromise);
 
-		console.log("This is response",cloudinaryResponse)
+		console.log("This is response", cloudinaryResponse);
 
 		const urls = cloudinaryResponse.map((obj) => obj.url);
 		const pubId = cloudinaryResponse.map((obj) => obj.public_id);
@@ -186,7 +184,7 @@ const editTweet = asyncHandler(async (req, res) => {
 		const media = {
 			mediaType: type,
 			urls,
-			pubId
+			pubId,
 		};
 
 		const resultWhenNewImage = await Tweet.findByIdAndUpdate(
@@ -536,6 +534,86 @@ const getPostComments = asyncHandler(async (req, res) => {
 	});
 });
 
+const getPostWithId = asyncHandler(async (req, res) => {
+	// console.log("This is user",req.user)
+	const loggedInUser = req.user._id;
+	const postId = req.params.query;
+	// console.log("This is postid", postId);
+
+	const result = await Tweet.aggregate([
+		[
+  {
+    '$match': {
+      '_id': new mongoose.Types.ObjectId(postId)
+    }
+  }, {
+    '$lookup': {
+      'from': 'likemodels', 
+      'let': {
+        'postid': '$_id'
+      }, 
+      'pipeline': [
+        {
+          '$match': {
+            '$expr': {
+              '$and': [
+                {
+                  '$eq': [
+                    '$$postid', '$postId'
+                  ]
+                }, {
+                  '$eq': [
+                    '$likedBy', new mongoose.Types.ObjectId(loggedInUser)
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ], 
+      'as': 'likedStatus'
+    }
+  }, {
+    '$addFields': {
+      'isLikedByYou': {
+        '$gt': [
+          {
+            '$size': '$likedStatus'
+          }, 0
+        ]
+      }
+    }
+  }, {
+    '$lookup': {
+      'from': 'users', 
+      'localField': 'author', 
+      'foreignField': '_id', 
+      'as': 'author'
+    }
+  }, {
+    '$unwind': '$author'
+  }, {
+    '$project': {
+      '__v': 0, 
+      'author.password': 0, 
+      'author.updatedAt': 0, 
+      'author.refreshToken': 0, 
+      'author.__v': 0, 
+      'author.email': 0, 
+      'likedStatus': 0
+    }
+  }
+]
+	]);
+
+	// console.log("This is result from aggegration pipeline", result);
+
+	return res.json({
+		message: "Ok",
+		result,
+	});
+});
+
 export {
 	createTweet,
 	deleteTweet,
@@ -543,4 +621,5 @@ export {
 	getUserTweet,
 	getPostComments,
 	editTweet,
+	getPostWithId,
 };

@@ -5,7 +5,11 @@ import axios, { Axios } from "axios";
 import { useParams } from "react-router-dom";
 import LoadingAnimation from "../../../utils/LoadingAnimation";
 
-function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
+function PostFeed({
+  setUserPosts,
+  setIsFollowedByYou,
+  handleGetFollowStatusFromChild,
+}) {
   // const [latestTweets, setlatestTweets] = useState(null);
 
   const [posts, setPosts] = useState([]);
@@ -49,12 +53,19 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
       return data;
     } catch (error) {
       console.error("There is a error while fetching, Feed Posts", error);
-      throw error
+      throw error;
     }
   };
-  
-  const { fetchNextPage, isError,isLoading,error, isFetchingNextPage, hasNextPage, data } =
-  useInfiniteQuery({
+
+  const {
+    fetchNextPage,
+    isError,
+    isLoading,
+    error,
+    isFetchingNextPage,
+    hasNextPage,
+    data,
+  } = useInfiniteQuery({
     queryKey: ["tweets"],
     queryFn: fetchPosts,
     initialPageParam: null,
@@ -62,11 +73,10 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
       return lastPage?.nextCursor ?? undefined;
     },
   });
-  
-  
-      // console.log("there is a error on homw feed ",error)
-  
-    const observer = useRef();
+
+  // console.log("there is a error on homw feed ",error)
+
+  const observer = useRef();
 
   const lastPostElementRef = useCallback((node) => {
     if (isFetchingNextPage) return;
@@ -82,7 +92,6 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     if (node) observer.current.observe(node);
   }, []);
 
-
   const {
     data: userPosts,
     isLoading: userProfileLoading,
@@ -93,6 +102,12 @@ function PostFeed({ setIsFollowedByYou, handleGetFollowStatusFromChild }) {
     queryFn: handleUserProfilePosts,
     enabled: !!userNameFromUrl,
   });
+
+  useEffect(() => {
+    if (userPosts) {
+      setUserPosts(userPosts?.result?.length);
+    }
+  }, [userPosts]);
 
   return (
     <div className="pb-12">

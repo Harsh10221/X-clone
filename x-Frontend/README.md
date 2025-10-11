@@ -5,7 +5,7 @@ till here the work done and need to understand the working how the working
 
 why the userprofile post are fetching in the postfeed ?
 
-chnage the backend response when no user is found so we can use it in search field 
+chnage the backend response when no user is found so we can use it in search field
 
 
 
@@ -14,14 +14,21 @@ chnage the backend response when no user is found so we can use it in search fie
 
 
 
-save / delete bookmark
-user username change (once a day ) / passwrod change
-not able to follow unfollow self 
-post count on profile 
-
-sharelink 
 
 
+
+
+
+
+
+
+
+
+[ limit username
+  A malicious user could change their name to impersonate someone, post harmful content, and then quickly change it again to hide
+limit password
+Because of the 24-hour limit, the attacker cannot immediately change the password back to lock the user out again. This gives the real user time to take further steps, like changing their associated email or enabling two-factor authentication
+]
 
 {
   ***
@@ -31,6 +38,13 @@ and on the password field the error msg is little bad
 }
 
 
+{comming soon
+  message , community (mobile nav)
+
+}
+
+
+
 {loadings
 
 
@@ -38,10 +52,10 @@ and on the password field the error msg is little bad
 
 
 
- 
 
 
-when i back from the home screen i got at the top of the home component , we can prevent this by going one step back in navigation history , the browser stack when we go to any path the browser put the details in stack with push and pop , but with navigate we push 
+
+when i back from the home screen i got at the top of the home component , we can prevent this by going one step back in navigation history , the browser stack when we go to any path the browser put the details in stack with push and pop , but with navigate we push
 }
 
 

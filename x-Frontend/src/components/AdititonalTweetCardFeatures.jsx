@@ -12,7 +12,9 @@ function AdititonalTweetCardFeatures({ tweetData }) {
     // console.log("this is data", tweetData);
 
   const [isLiked, setisLiked] = useState(false);
+  const [likeCurrentCount, setlikeCurrentCount] = useState(tweetData?.likeCount)
   const commentUnderPostUrl = `/post/comment/${tweetData?._id}`;
+  // let likeCurrentCount = tweetData?.likeCount
 
   // console.log("This is isthis comment",isThisIsComment)
 
@@ -35,7 +37,9 @@ function AdititonalTweetCardFeatures({ tweetData }) {
         { authorId: tweetData.author._id, postId: tweetData._id },
         { withCredentials: true }
       )
-      .then((response) => setisLiked(true))
+      .then((response) =>{
+        setlikeCurrentCount(prev => prev+1)
+        setisLiked(true)})
       //   .then((response) => console.log("this is resposnse", response))
       .catch((error) => console.error(error));
   };
@@ -49,7 +53,10 @@ function AdititonalTweetCardFeatures({ tweetData }) {
         // { authorId: tweetData.author._id, postId: _id },
         withCredentials: true,
       })
-      .then((response) => setisLiked(false))
+      .then((response) => {
+        setlikeCurrentCount(prev => prev-1)
+        setisLiked(false)})
+
       .catch((error) => console.error(error));
   };
 
@@ -80,7 +87,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
       </div>
 
       <div className="flex gap-1 items-center justify-center ">
-      <div className="pb-1  " > {tweetData?.likeCount} </div>  
+      <div className="pb-1  " > {likeCurrentCount } </div>  
         {isLiked ? (
           <HeartIcon
             onClick={handleUnLikePost}
@@ -112,7 +119,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
         <BookmarkIcon className=" w-5 h-5" />{" "}
       </div>
       <div>
-        <ArrowUpTrayIcon className=" w-5 h-5" />{" "}
+        <ArrowUpTrayIcon onClick={()=> navigator.clipboard.writeText(`http://localhost:5173/user/tweet/${tweetData?._id}`) } className="cursor-pointer w-5 h-5" />{" "}
       </div>
     </div>
   );

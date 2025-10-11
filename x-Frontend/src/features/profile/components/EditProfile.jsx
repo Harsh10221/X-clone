@@ -4,8 +4,9 @@ import {
   ChevronRightIcon,
   PencilIcon,
   PencilSquareIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import default_profile from "../../../assets/default_profile.png";
 import InputBox from "../../auth/components/InputBox";
 import { useForm } from "react-hook-form";
@@ -14,22 +15,27 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { loginSuccess } from "../../Slices/userSlice";
 import LoadingAnimation from "../../../utils/LoadingAnimation";
+import AnimatedComponent from "../../../utils/ErrorAnimatedComponent";
 
 function EditProfile() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isChangingPasswrod, setIsChangingPasswrod] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isError, setisError] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const avatarRef = useRef(null);
   const bannerRef = useRef(null);
   const dataToUpload = new FormData();
   const userData = useSelector((state) => state.user.userInfo);
-  const date = new Date(userData.dob);
+  const date = new Date(userData?.dob);
 
   const formatedDate = date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+
 
   const {
     register,
@@ -51,8 +57,7 @@ function EditProfile() {
   const { ref: bannerRegisterRef, ...bannerRest } = register("banner");
 
   const onSubmit = async (data) => {
-    setIsLoading(true)
-    // console.log(data);
+    setIsLoading(true);
 
     for (const element in data) {
       if (data[element] instanceof FileList) {
@@ -78,10 +83,26 @@ function EditProfile() {
       }
     } catch (error) {
       console.error("There is a error while updating profile", error);
+      setErrorMsg(error.response.data.error);
+      setisError(true);
+      setIsLoading(false);
     }
+    console.log("This is error", isError);
 
     // console.log("this is response ", response);
   };
+
+  useEffect(() => {
+    if (isError) {
+      setTimeout(() => {
+        setisError(false);
+      }, 3000);
+    }
+
+    // return () => {
+    //   second
+    // }
+  }, [isError]);
 
   const handleRedirectToProfile = () => {
     navigate("/home");
@@ -95,8 +116,23 @@ function EditProfile() {
     bannerRef.current.click();
   };
 
+  const handleChangePassword = () => {
+    setIsChangingPasswrod((prev) => !prev);
+  };
+
   return (
     <form className="w-screen h-screen  " onSubmit={handleSubmit(onSubmit)}>
+      {isError ? (
+        <AnimatedComponent
+          show={isError}
+          duration={500}
+          className="absolute  border border-blue-500/100 
+                  bg-black top-1 z-10"
+        >
+          {errorMsg}
+        </AnimatedComponent>
+      ) : null}
+
       <input
         type="file"
         accept="image/*"
@@ -167,53 +203,96 @@ function EditProfile() {
               className="top-24 left-40 absolute text-white w-6 h-6"
             />
           </div>
-
-          <div className="flex flex-col pt-12 gap-5 p-5 ">
-            <InputBox
-              {...register("name", { required: true })}
-              width={"w-96"}
-              text={"Name"}
-            />
-            <InputBox
-              {...register("username", { required: true })}
-              width={"w-96"}
-              text={"Username"}
-            />
-            <InputBox
-              {...register("email", { required: true })}
-              width={"w-96"}
-              text={"Email"}
-            />
-            <InputBox {...register("bio")} width={"w-96"} text={"Bio"} />
-            <InputBox
-              {...register("location")}
-              width={"w-96"}
-              text={"Location"}
-            />
-            <InputBox
-              {...register("website")}
-              width={"w-96"}
-              text={"Website"}
-            />
-
-            <div className="text-white flex justify-between ">
-              <div className="flex flex-col">
-                <span>Birth date</span>
-                <span>{formatedDate}</span>
+          {/* {isChangingPasswrod ? ( */}
+          {isChangingPasswrod ? (
+            <div className="flex flex-col pt-12 gap-5 p-5 ">
+             
+              <div onClick={handleChangePassword}>
+                <XMarkIcon className="text-white w-5 h-5" />
               </div>
-              {/* <ChevronRightIcon className=" w-5 h-5" /> */}
+
+              <InputBox
+              key={"current_password"}
+                {...register("current_password", { required: true })}
+                width={"w-96"}
+                text={"Current password"}
+              />
+
+              <InputBox
+              key={"new_password"}
+                {...register("new_password", { required: true })}
+                width={"w-96"}
+                text={"New password"}
+              />
+
+              <InputBox
+              key={"confirm_new_password"}
+                {...register("confirm_new_password", { required: true })}
+                width={"w-96"}
+                text={"Confirm new password"}
+              />
             </div>
 
-            <div className="text-white flex justify-between ">
-              <div className="">Create expanded bio</div>
-              <ChevronRightIcon className=" w-5 h-5" />
-            </div>
+          ) : (
+            <div className="flex flex-col pt-12 gap-5 p-5 ">
+              <InputBox
+              key={"name"}
+                {...register("name", { required: true })}
+                width={"w-96"}
+                text={"Name"}
+              />
+              <InputBox
+              key={"username"}
+                {...register("username", { required: true })}
+                width={"w-96"}
+                text={"Username"}
+              />
+              <InputBox
+              key={"email"}
+                {...register("email", { required: true })}
+                width={"w-96"}
+                text={"Email"}
+              />
+              <InputBox key={"bio"} {...register("bio")} width={"w-96"} text={"Bio"} />
+              <InputBox
+              key={"location"}
+                {...register("location")}
+                width={"w-96"}
+                text={"Location"}
+              />
+              <InputBox
+              key={"website"}
+                {...register("website")}
+                width={"w-96"}
+                text={"Website"}
+              />
 
-            <div className="text-white flex justify-between ">
-              <div className="">Switch to professional</div>
-              <ChevronRightIcon className=" w-5 h-5" />
+              <div className="text-white flex justify-between ">
+                <div className="flex flex-col">
+                  <span>Birth date</span>
+                  <span>{formatedDate}</span>
+                </div>
+              </div>
+
+              <div
+                onClick={handleChangePassword}
+                className="text-white flex justify-between "
+              >
+                <div className="">Change password</div>
+                <ChevronRightIcon className=" w-5 h-5" />
+              </div>
+
+              <div className="text-white flex justify-between ">
+                <div className="">Create expanded bio</div>
+                <ChevronRightIcon className=" w-5 h-5" />
+              </div>
+
+              <div className="text-white flex justify-between ">
+                <div className="">Switch to professional</div>
+                <ChevronRightIcon className=" w-5 h-5" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </form>

@@ -42,7 +42,7 @@ function App() {
           <Route path="/home" element={<Layout />}>
             <Route path="profile/:username" element={<Profile />} />
             <Route path="notifications" element={<Notification />} />
-            <Route path="user/tweet" element={<TweetExtraDetails />} />
+            <Route path="user/tweet/:userId" element={<TweetExtraDetails />} />
 
             <Route index element={<Home />} />
           </Route>
@@ -60,8 +60,8 @@ function App() {
 
 
           {/* TweetExtraDetails */}
-          <Route path="/user/tweet" element={<TweetExtraDetails />} />
           <Route path="/user/tweet/:userId" element={<TweetExtraDetails />} />
+          {/* <Route path="/user/tweet/:userId" element={<TweetExtraDetails />} /> */}
         
         </Route>
       </Routes>

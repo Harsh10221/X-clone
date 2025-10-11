@@ -34,9 +34,9 @@ function HamburgerMenu() {
   const handlePofile = () => {
     // navigate("/profile");
     isMobile ? (
-    navigate(`/profile/${userInfo._id}`) 
+    navigate(`/profile/${userInfo?._id}`) 
   ) :
-  (navigate(`/home/profile/${userInfo._id}`) 
+  (navigate(`/home/profile/${userInfo?._id}`) 
 )
     // navigate("/home/profile");
   };
@@ -157,7 +157,7 @@ function HamburgerMenu() {
             <div className="flex justify-between ">
               <img
                 className="h-10 rounded-full"
-                src={userInfo.avatarUrl}
+                src={userInfo?.avatarUrl}
                 alt=""
                 srcset=""
               />
@@ -167,18 +167,18 @@ function HamburgerMenu() {
             </div>
 
             <div className="text-white   ">
-              <span className="font-bold  ">{userInfo.fullName}</span>
+              <span className="font-bold  ">{userInfo?.fullName}</span>
               <br />
-              <span className="text-[#737373]  ">@{userInfo.userName}</span>
+              <span className="text-[#737373]  ">@{userInfo?.userName}</span>
             </div>
 
             <div className="space-x-2  text-white">
               <span className="font-bold">
-                {userInfo.followings}
+                {userInfo?.followings}
                 <span className="text-[#737373]  font-normal ">Following </span>
               </span>
               <span className="font-bold">
-                {userInfo.followers}
+                {userInfo?.followers}
                 <span className="text-[#737373] font-normal "> Followers</span>
               </span>
             </div>

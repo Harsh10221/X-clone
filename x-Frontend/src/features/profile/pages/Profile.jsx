@@ -13,16 +13,28 @@ import PostFeed from "../../Home/components/PostFeed";
 
 function Profile() {
   const [activefilter, setActivefilter] = useState("Posts");
-  const [userPosts, setUserPosts] = useState([]);
+  const [userPosts, setUserPosts] = useState();
   const [isFollow, setIsFollow] = useState(false);
+  const [anotherUserProfileData, setanotherUserProfileData] = useState(
+    useLocation()?.state?.author
+  );
   const [isFollowedByYou, setIsFollowedByYou] = useState(null);
 
   const userInfo = useSelector((state) => state.user.userInfo);
 
   const { username } = useParams();
-  // console.log("This is userinfo", userInfo);
 
-  const anotherUserProfileData = useLocation()?.state?.author;
+  useEffect(() => {
+    // console.log("This is another profile", anotherUserProfileData);
+    if (anotherUserProfileData?._id == userInfo?._id) {
+      setanotherUserProfileData(null);
+    }
+  }, []);
+
+  // console.log("This is userinfo", userInfo);
+  // console.log("This is userpost",userPosts );
+
+  // const anotherUserProfileData = useLocation()?.state?.author;
 
   // console.log("This is antoherprofile",anotherUserProfileData)
 
@@ -54,9 +66,10 @@ function Profile() {
         }
       )
       .then((response) => {
-        anotherUserProfileData.followers++
-        setIsFollowedByYou(true)})
-     .catch((error) => console.error(error));
+        anotherUserProfileData.followers++;
+        setIsFollowedByYou(true);
+      })
+      .catch((error) => console.error(error));
   };
 
   const handleUnFollowUser = () => {
@@ -69,9 +82,10 @@ function Profile() {
         }
       )
       .then((response) => {
-                anotherUserProfileData.followers--
+        anotherUserProfileData.followers--;
 
-        setIsFollowedByYou(false)})
+        setIsFollowedByYou(false);
+      })
       // .then((response) => setIsFollow(false))
       // .then((response) => (response.status == 200 ? setIsFollow(true) : null))
       .catch((error) => console.error(error));
@@ -102,7 +116,7 @@ function Profile() {
               : userInfo.userName}
           </div>
           <div className="font-extralight text-[#969595] font-roboto">
-            0 posts
+            {userPosts} posts
           </div>
         </div>
       </div>
@@ -217,6 +231,7 @@ function Profile() {
 
         <div className="flex-1  w-full bg-black  ">
           <PostFeed
+            setUserPosts={setUserPosts}
             handleGetFollowStatusFromChild={handleGetFollowStatusFromChild}
             setIsFollowedByYou={setIsFollowedByYou}
           />

@@ -35,6 +35,7 @@ function Layout() {
     setsearchTerm(input);
     console.log("THis is user input ser", input);
   };
+  
   return (
     <div className="h-full w-full bg-black  relative ">
       {isMobile ? (
