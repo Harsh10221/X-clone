@@ -1,5 +1,8 @@
 A full-stack, feature-rich social media application inspired by X (formerly Twitter), built with the MERN stack. This project demonstrates modern web development practices, including secure authentication, cloud media handling, and a dynamic, responsive user interface with infinite scrolling.
 
+**🚀 Live Demo: https://x-clone-test.netlify.app **
+
+
 ## ✨ Features
 
 * **Secure Authentication**: Robust user registration and login with passwords hashed using **bcrypt** and stateless authentication via **JSON Web Tokens (JWT)**.
