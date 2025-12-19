@@ -4,6 +4,7 @@ services:
   frontend:
     # build: ./x-Frontend
     image: harsh0031/frontend-image
+    container_name: x-frontend-prod
     ports:
       - "3000:80"
     networks:
@@ -13,6 +14,7 @@ services:
   backend:
     # build: ./x-Backend
     image: harsh0031/backend-image
+    container_name: x-backend-prod
     ports:
       - "8000:8000"
     networks:

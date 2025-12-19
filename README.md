@@ -4,6 +4,17 @@
 
 
 
+Trigger 
+
+build
+
+push
+
+deploy 
+
+
+
+
 
 
 

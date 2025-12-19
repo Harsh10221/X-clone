@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./x-Backend
+          file: ./x-Backend/Dockerfile
+          push: true
+          tags: harsh0031/backend-image
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./x-Frontend
+          file: ./x-Frontend/Dockerfile
+          push: true
+          tags: harsh0031/frontend-image:v1
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into vps and deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{  secrets.HOST_IP }}
+          username: ${{  secrets.HOST_USERNAME }}
+          key: ${{  secrets.PRIVATE_KEY }}
+          script: |
+            sudo docker pull harsh0031/frontend-image:v1
+            sudo docker pull harsh0031/backend-image
+            sudo docker-compose stop  
+            docker rm x-frontend-prod x-backend-prod || true
+            docker-compose up -d
