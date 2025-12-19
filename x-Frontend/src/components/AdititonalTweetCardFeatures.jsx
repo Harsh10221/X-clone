@@ -33,7 +33,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
     e.stopPropagation();
     axios
       .post(
-        `http://localhost:8000/api/v1/users/like-user`,
+        `/api/v1/users/like-user`,
         { authorId: tweetData.author._id, postId: tweetData._id },
         { withCredentials: true }
       )
@@ -48,7 +48,7 @@ function AdititonalTweetCardFeatures({ tweetData }) {
 
   const handleUnLikePost = () => {
     axios
-      .delete(`http://localhost:8000/api/v1/users/unlike-user`, {
+      .delete(`/api/v1/users/unlike-user`, {
         data: { postId: tweetData._id },
         // { authorId: tweetData.author._id, postId: _id },
         withCredentials: true,

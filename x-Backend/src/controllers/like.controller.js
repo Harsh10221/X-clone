@@ -1,7 +1,4 @@
-import {
-	HardforkMismatchError,
-	TransactionRevertedWithoutReasonError,
-} from "web3";
+
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import { Tweet } from "../models/tweet.model.js";

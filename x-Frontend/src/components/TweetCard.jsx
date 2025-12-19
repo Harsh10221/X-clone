@@ -68,7 +68,7 @@ function TweetCard({ tweetData }) {
 
   const deletemutation = useMutation({
     mutationFn: () =>
-      axios.delete("http://localhost:8000/api/v1/users/delete-tweet", {
+      axios.delete("/api/v1/users/delete-tweet", {
         data: { postId: tweetData?._id },
         withCredentials: true,
       }),

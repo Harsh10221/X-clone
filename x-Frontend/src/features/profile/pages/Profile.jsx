@@ -59,7 +59,7 @@ function Profile() {
   const handleFollowUser = () => {
     axios
       .post(
-        `http://localhost:8000/api/v1/users/follow-user`,
+        `/api/v1/users/follow-user`,
         { followerId: userInfo._id, followingId: anotherUserProfileData._id },
         {
           withCredentials: true,
@@ -75,7 +75,7 @@ function Profile() {
   const handleUnFollowUser = () => {
     axios
       .post(
-        `http://localhost:8000/api/v1/users/unfollow-user `,
+        `/api/v1/users/unfollow-user `,
         { followerId: userInfo._id, followingId: anotherUserProfileData._id },
         {
           withCredentials: true,

@@ -12,12 +12,19 @@ import jwt from "jsonwebtoken";
 
 const app = express();
 
+// app.use(
+// 	cors()
+// );
 app.use(
 	cors({
+		// origin: "http://localhost:5000",
 		origin: process.env.CORS_ORIGIN,
 		credentials: true,
+		
 	})
 );
+
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -79,7 +86,7 @@ import ApiError from "./utils/ApiError.js";
 
 app.use("/api/v1/users", userRouter);
 
-server.listen(8000, () => {
+server.listen(8000,'0.0.0.0', () => {
 	console.log("Server running on http://localhost:8000");
 });
 

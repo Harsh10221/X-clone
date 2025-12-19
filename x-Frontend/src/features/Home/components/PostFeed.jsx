@@ -25,7 +25,7 @@ function PostFeed({
     // console.log("hello from handleuserprofile", userNameFromUrl);
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/users/getuser-posts/${userNameFromUrl}`,
+        `/api/v1/users/getuser-posts/${userNameFromUrl}`,
         {
           withCredentials: true,
         }
@@ -43,7 +43,7 @@ function PostFeed({
     try {
       // console.log("THis is pageproma",pageParam)
 
-      let apiUrl = `http://localhost:8000/api/v1/users/get-latest-tweets`;
+      let apiUrl = `/api/v1/users/get-latest-tweets`;
 
       if (pageParam) {
         apiUrl += `?cursor=${pageParam}`;

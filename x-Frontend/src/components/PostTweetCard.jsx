@@ -143,7 +143,7 @@ function PostTweetCard() {
 
       axios
         .patch(
-          "http://localhost:8000/api/v1/users/edit-post",
+          "/api/v1/users/edit-post",
 
           dataToUpload,
 
@@ -154,7 +154,7 @@ function PostTweetCard() {
     } else {
       axios
         .post(
-          "http://localhost:8000/api/v1/users/create-post",
+          "/api/v1/users/create-post",
           //  {
           dataToUpload
           // author:userId

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Xsvg from "./Xsvg";
 import InputBox from "./InputBox";
 import Eye from "./Eye";
-import EyeSlash from "./eyeSlash";
+import EyeSlash from "./EyeSlash";
 import { useFormContext } from "react-hook-form";
 import AnimatedComponent from "../../../utils/ErrorAnimatedComponent";
 // import { EyeIcon } from '@heroicons/react/20/solid'

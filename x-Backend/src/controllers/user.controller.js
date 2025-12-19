@@ -1,6 +1,5 @@
 // import cookieParser from "cookie-parser";
 import { OAuth2Client } from "google-auth-library";
-import { clients } from "../app.js";
 import { User } from "../models/user.model.js";
 import otpStore from "../otpStore.js";
 import ApiError from "../utils/ApiError.js";
@@ -8,8 +7,6 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 // import {semnd}
 import sendCodeAndCheck from "../utils/otpCheck.js";
-import { providers } from "web3";
-import ApiResponse from "../utils/ApiResponse.js";
 import { Tweet } from "../models/tweet.model.js";
 // import { use } from "react";
 // cookieParser

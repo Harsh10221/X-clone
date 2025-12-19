@@ -1,0 +1,26 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I got very much confusion on port maping i know know how to use than and why but there are too much info at same time so thats why i got very confusion then after an hour i see the url the request where it made and it was on localhost:8000 and the i suddenly realized i swaped the ports and also find out about the each container has there own localhost so is i did localhost and then any request they will talk to each other 
+
+
+
+
+
+

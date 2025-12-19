@@ -1,0 +1,41 @@
+# version: '3.8'
+
+services:
+  frontend:
+    # build: ./x-Frontend
+    image: harsh0031/frontend-image
+    ports:
+      - "3000:80"
+    networks:
+      - xclone
+
+
+  backend:
+    # build: ./x-Backend
+    image: harsh0031/backend-image
+    ports:
+      - "8000:8000"
+    networks:
+      - xclone
+    depends_on:
+      - frontend
+    environment:
+      - ACCESS_TOKEN_EXPIRY=
+      - ACCESS_TOKEN_SECRET=
+      - BREVO_SECRET_KEY=
+      - CLOUDINARY_API_KEY= 
+      - CLOUDINARY_API_SECRET= 
+      - CLOUDINARY_CLOUD_NAME=
+      - CORS_ORIGIN=
+      - EMAIL_PASS= 
+      - EMAIL_USER=
+      - MONGODB_URL= 
+      - PORT= 
+      - REFRESH_TOKEN_EXPIRY= 
+      - REFRESH_TOKEN_SECRET=
+
+networks:
+  xclone:
+    driver: bridge
+
+    

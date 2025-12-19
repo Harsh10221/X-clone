@@ -17,7 +17,7 @@ import Xsvg from "./Xsvg";
 import InputBox from "./InputBox";
 import { useFormContext } from "react-hook-form";
 import Eye from "./Eye";
-import EyeSlash from "./eyeSlash";
+import EyeSlash from "./EyeSlash";
 import { useNavigate } from "react-router-dom";
 
 // import { parseAst } from "vite";
