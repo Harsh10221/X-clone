@@ -47,5 +47,5 @@ jobs:
             sudo docker pull harsh0031/frontend-image:v1
             sudo docker pull harsh0031/backend-image
             sudo docker-compose stop  
-            docker rm x-frontend-prod x-backend-prod || true
-            docker-compose up -d
+            sudo docker rm x-frontend-prod x-backend-prod || true
+            sudo docker-compose up -d
